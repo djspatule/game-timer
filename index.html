@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<!-- Latest compiled and minified CSS -->
+
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width" />
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+		<title>
+			Game Timer
+		</title>
+	</head>
+	<body>
+		<div class="text-center" class="container" >
+			<h1>Gamer Timer</h1>
+			<button onclick="startFirstPlayerTimer()" class="btn btn-primary" id="startFirstPlayerTimerButton"><h3>First player</h3> <br><br> Time left:<h3><div id="firstPlayerTimerDiv"> 0 </div></h3></button>
+			<button onclick="startSecondPlayerTimer()" class="btn btn-success" id="startSecondPlayerTimerButton"><h3>Second player</h3> <br><br> Time left:<h3><div id="secondPlayerTimerDiv"> 0 </div></h3></button>
+			<br><button onclick="setTurnDuration()" class="btn btn-default btn-lg" id="setTurnDurationButton">Set turn duration</button>
+			
+		</div>
+	<script src="script.js"></script>
+	</body>
+</html>
