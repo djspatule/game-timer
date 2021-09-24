@@ -4,8 +4,8 @@
 
 -----------------------------------*/
 
-var turnLength = ""; //create a turnDuration variable
-var turnDuration = ""; //create a turnDuration variable
+var turnLength = 29; //create a turnDuration variable
+var turnDuration = 0; //create a turnDuration variable
 
 var audio = new Audio('beep.mp3'); // create a sound variable to "beep"
 
@@ -127,14 +127,14 @@ var min = 0;
 var stopTime = true;
 
 function gameDuration() {
-    if (stoptime == true) {
-        stoptime = false;
+    if (stopTime == true) {
+        stopTime = false;
         timerCycle();
     }
 }
 
 function timerCycle() {
-	if (stoptime == false) {
+	if (stopTime == false) {
 	    sec = parseInt(sec);
 	    min = parseInt(min);
 	    hr = parseInt(hr);
@@ -169,12 +169,26 @@ function timerCycle() {
 }
   
 function resetTotalPlayTimerButton (){
-	if (stoptime == false) {
-    stoptime = true;
+	if (stopTime == false) {
+    stopTime = true;
+    gameStart = false;
     totalPlayTimeDisplayDiv.innerHTML = "00:00:00";
-    stoptime = true;
+    stopTime = true;
     hr = 0;
     sec = 0;
     min = 0;
   }
 }
+
+
+/*---------------------------------
+
+		ToDo
+
+- corriger les timers par players qui descendent à -2. Tenter une version avec setTimeout() plutôt que setInterval?
+- faire en sorte qu'en cliquant sur un timer, ça le relance à chaque fois à 0
+- inscrire une valeur de TurnDuration par défaut.
+
+
+-----------------------------------*/
+
