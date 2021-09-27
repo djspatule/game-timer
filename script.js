@@ -4,16 +4,18 @@
 
 -----------------------------------*/
 
-var turnLength = 29; //create a turnDuration variable
-var turnDuration = 0; //create a turnDuration variable
+var turnLength = 30; //create a turnDuration variable
 
 var audio = new Audio('beep.mp3'); // create a sound variable to "beep"
 
 var numberOfPlayers = 0; // create a variable to track the number of players (and of timers)
 
-var firstPlayerTimerDiv = document.getElementById('firstPlayerTimerDiv');
-
 var gameStart = false;
+
+var timeoutFirstPlayer =0;
+var secFirstPlayer = 30;
+var timeoutSecondPlayer =0;
+var secSecondPlayer = 30;
 
 /*---------------------------------
 
@@ -21,7 +23,11 @@ var gameStart = false;
 
 -----------------------------------*/
 function setTurnDuration() {
-turnLength = window.prompt("Enter the turn duration in seconds: "); //prompt the user for the required turn duration
+turnLength = parseInt(window.prompt("Enter the turn duration in seconds: ")); //prompt the user for the required turn duration
+clearTimeout(timeoutFirstPlayer)
+clearTimeout(timeoutSecondPlayer)
+firstPlayerTimerDiv.innerHTML = turnLength;
+secondPlayerTimerDiv.innerHTML = turnLength;
 }
 
 /*---------------------------------
@@ -29,8 +35,10 @@ turnLength = window.prompt("Enter the turn duration in seconds: "); //prompt the
 		First PLAYER
 
 -----------------------------------*/
+//fetch the corresponding HTML div
+var firstPlayerTimerDiv = document.getElementById('firstPlayerTimerDiv');
 
-//call the printTime function every second.
+//Called by a click on the corresponding player's timer button
 function startFirstPlayerTimer() {
 	
 	//register if it is the first click to start total play time calculation
@@ -38,79 +46,101 @@ function startFirstPlayerTimer() {
 		gameStart = true;
 		gameDuration();
 	}
-	//for each turn, base your turn duration on the latest duration inputed by the user
-	turnDuration = turnLength;
 
-	//initialize the font to black (as it has been turn to red at the end of the previous round/turn)
+	//initialize the font to black (as it has been turned to red at the end of the previous round/turn)
 	firstPlayerTimerDiv.classList.remove('text-danger');
 
-	//create a function that checks if ther still is time and rights the time left in the HMTL document (and the console)
-	function printTime() {
-		
-		//alert the user in the last 3 seconds
-		if (turnDuration > 0 && turnDuration <= 3) {
+	//reset the other player's timer and writes it 
+	clearTimeout(timeoutSecondPlayer);
+	secondPlayerTimerDiv.innerHTML = turnLength;
+
+
+	//for each turn, base your turn duration on the latest duration inputed by the user
+	secFirstPlayer = parseInt(turnLength);
+	clearTimeout(timeoutFirstPlayer);
+	firstPlayerTurnDuration();
+}
+
+//create a function that checks if there still is time and writes the time left in the HMTL document
+function firstPlayerTurnDuration() {
+
+	//decrement the player's time 
+	secFirstPlayer = secFirstPlayer - 1;
+
+	//alert the user at 10 seconds to the end and in the last 3 seconds
+		if (secFirstPlayer == 10 || secFirstPlayer<= 3) {
 			audio.play();
 			firstPlayerTimerDiv.classList.add('text-danger');
 		}
-		
-		//Stop the timer at 0 seconds left
-		else if (turnDuration <= 0) {
-			clearInterval(interval);
-		}
-		firstPlayerTimerDiv.innerHTML = turnDuration;
-		turnDuration -= 1;
-		console.log("turnDuration is :" + turnDuration);
-		console.log("interval is: " + interval);
-	}
+	//write the player's remaining time	
+	firstPlayerTimerDiv.innerHTML = secFirstPlayer;
 
-	//actually do the timing second by second
-	var interval = setInterval(printTime, 1000);
+	//start the actual counting function
+	timeoutFirstPlayer = setTimeout("firstPlayerTurnDuration()", 1000);
+
+	//halt the counting function if time is out
+	if (secFirstPlayer == 0) {
+		clearTimeout(timeoutFirstPlayer);
+		secFirstPlayer = parseInt(turnLength);
+	}
 }
 
+	
 
 /*---------------------------------
 
 		Second PLAYER
 
 -----------------------------------*/
+//fetch the corresponding HTML div
+var secondPlayerTimerDiv = document.getElementById('secondPlayerTimerDiv');
 
-//call the printTime function every second.
+//Called by a click on the corresponding player's timer button
 function startSecondPlayerTimer() {
-
+	
 	//register if it is the first click to start total play time calculation
 	if (gameStart == false) {
 		gameStart = true;
 		gameDuration();
 	}
-	
-	//for each turn, base your turn duration on the latest duration inputed by the user
-	turnDuration = turnLength;
 
 	//initialize the font to black (as it has been turn to red at the end of the previous round/turn)
 	secondPlayerTimerDiv.classList.remove('text-danger');
 
-	//create a function that checks if ther still is time and rights the time left in the HMTL document (and the console)
-	function printTime() {
-		
-		//alert the user in the last 3 seconds
-		if (turnDuration > 0 && turnDuration <= 3) {
-			audio.play();
-			secondPlayerTimerDiv.classList.add('text-danger');
-		}
+	//reset the other player's timer and writes it 
+	clearTimeout(timeoutFirstPlayer);
+	firstPlayerTimerDiv.innerHTML = turnLength;
 
-		//Stop the timer at 0 seconds left
-		else if (turnDuration <= 0) {
-			clearInterval(interval);
-		}
+	//for each turn, base your turn duration on the latest duration inputed by the user
+	secSecondPlayer = parseInt(turnLength);
+	clearTimeout(timeoutSecondPlayer);
+	secondPlayerTurnDuration();
+}
 
-		secondPlayerTimerDiv.innerHTML = turnDuration;
-		turnDuration -= 1;
-		console.log("turnDuration is :" + turnDuration);
-		console.log("interval is: " + interval);
+//create a function that checks if there still is time and writes the time left in the HMTL document
+function secondPlayerTurnDuration() {
+
+	//decrement the player's time 
+	secSecondPlayer = secSecondPlayer - 1;
+
+	
+	//alert the user at 10 seconds to the end and in the last 3 seconds
+	if (secSecondPlayer == 10 || secSecondPlayer<= 3) {
+		audio.play();
+		secondPlayerTimerDiv.classList.add('text-danger');
 	}
 
-	//actually do the timing second by second
-	var interval = setInterval(printTime, 1000);
+	//write the player's remaining time	
+	secondPlayerTimerDiv.innerHTML = secSecondPlayer;
+
+	//start the actual counting function
+	timeoutSecondPlayer = setTimeout("secondPlayerTurnDuration()", 1000);
+	
+	//halt the counting function if time is out
+	if (secSecondPlayer == 0) {
+		clearTimeout(timeoutSecondPlayer);
+		secSecondPlayer = parseInt(turnLength);
+	}
 }
 
 
@@ -126,6 +156,7 @@ var sec = 0;
 var min = 0;
 var stopTime = true;
 
+//is called on any of the player's button.
 function gameDuration() {
     if (stopTime == true) {
         stopTime = false;
@@ -167,16 +198,23 @@ function timerCycle() {
 	    setTimeout("timerCycle()", 1000);
 	}
 }
-  
+
+
+//called on click of the totalPlayTime button.
 function resetTotalPlayTimerButton (){
 	if (stopTime == false) {
     stopTime = true;
     gameStart = false;
     totalPlayTimeDisplayDiv.innerHTML = "00:00:00";
-    stopTime = true;
     hr = 0;
     sec = 0;
     min = 0;
+
+    //reset all variables and timers.
+    clearTimeout(timeoutFirstPlayer);
+    clearTimeout(timeoutSecondPlayer);
+    firstPlayerTimerDiv.innerHTML = parseInt(turnLength);
+    secondPlayerTimerDiv.innerHTML = parseInt(turnLength);
   }
 }
 
@@ -192,3 +230,18 @@ function resetTotalPlayTimerButton (){
 
 -----------------------------------*/
 
+
+/*---------------------------------
+
+		Backlog
+
+- shows 2 to 4 timers 
+- each time i click a timer, it stops or it  and the other one starts. 
+- Custo : 
+	- timer color
+	- name on the timer 
+	- timer duration
+	- bonus if timer not consumed
+	- what happens when over ? 
+
+-----------------------------------*/
