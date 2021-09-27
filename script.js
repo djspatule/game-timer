@@ -13,11 +13,25 @@ var numberOfPlayers = 2; // create a variable to track the number of players (an
 var gameStart = false;
 
 //tentative de transformer les joueurs en objet JS
+
+function Player(timeout, sec, div) {
+  this.timeout = timeout;
+  this.sec =sec;
+  this.div = div
+}
+
+var player1 = new Player(0,30,document.getElementById('firstPlayerDiv'));
+
 var player1 = {};
 player1.timeout = 1;
 player1.sec = parseInt(turnLength);
 player1.div = document.getElementById('firstPlayerDiv');
 
+var players = [player1, player2]
+
+for (player in players) {
+clearTimeout(player.timeout);
+}
 
 
 
