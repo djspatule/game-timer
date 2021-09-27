@@ -223,10 +223,7 @@ function resetTotalPlayTimerButton (){
 
 		ToDo
 
-- corriger les timers par players qui descendent à -2. Tenter une version avec setTimeout() plutôt que setInterval?
-- faire en sorte qu'en cliquant sur un timer, ça le relance à chaque fois à 0
-- inscrire une valeur de TurnDuration par défaut.
-
+- shows 2 to 4 timers 
 
 -----------------------------------*/
 
@@ -235,8 +232,6 @@ function resetTotalPlayTimerButton (){
 
 		Backlog
 
-- shows 2 to 4 timers 
-- each time i click a timer, it stops or it  and the other one starts. 
 - Custo : 
 	- timer color
 	- name on the timer 
