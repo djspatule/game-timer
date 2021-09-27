@@ -23,12 +23,40 @@ var secSecondPlayer = 30;
 
 -----------------------------------*/
 function setTurnDuration() {
-turnLength = parseInt(window.prompt("Enter the turn duration in seconds: ")); //prompt the user for the required turn duration
-clearTimeout(timeoutFirstPlayer)
-clearTimeout(timeoutSecondPlayer)
-firstPlayerTimerDiv.innerHTML = turnLength;
-secondPlayerTimerDiv.innerHTML = turnLength;
+
+	//prompt the user for the required turn duration
+	turnLength = parseInt(window.prompt("Enter the turn duration in seconds: "));
+	
+	clearTimeout(timeoutFirstPlayer)
+	clearTimeout(timeoutSecondPlayer)
+	firstPlayerTimerDiv.innerHTML = turnLength;
+	secondPlayerTimerDiv.innerHTML = turnLength;
 }
+
+/*---------------------------------
+
+		Set number of players
+
+
+-----------------------------------*/
+function setNumberOfPlayers() {
+	
+	numberOfPlayers = parseInt(window.prompt("Enter the number of players: ")); //prompt the user for the number of players
+	if (numberOfPlayers == 3 || numberOfPlayers == 4) {
+		var thirdPlayerDiv = document.getElementById('thirdPlayerDiv');
+		thirdPlayerDiv.innerHTML = '<button onclick="startThirdPlayerTimer()" class="btn btn-warning" id="startThirdPlayerTimerButton"><h3>Third player</h3> <br><br> Time left:<h2><div id="thirdPlayerTimerDiv"> 30 </div></h2></button>';
+	}
+	if (numberOfPlayers == 4) {
+		var fourthPlayerDiv = document.getElementById('fourthPlayerDiv');
+		fourthPlayerDiv.innerHTML = '<button onclick="startfourthPlayerTimer()" class="btn btn-danger" id="startFourthPlayerTimerButton"><h3>Fourth player</h3> <br><br> Time left:<h2><div id="fourthPlayerTimerDiv"> 30 </div></h2></button>';
+	}
+
+	if (numberOfPlayers >4) {
+		alert("this app cannot deal with more than 4 players for now.");
+	}
+}
+
+
 
 /*---------------------------------
 
@@ -53,6 +81,7 @@ function startFirstPlayerTimer() {
 	//reset the other player's timer and writes it 
 	clearTimeout(timeoutSecondPlayer);
 	secondPlayerTimerDiv.innerHTML = turnLength;
+	secondPlayerTimerDiv.classList.remove('text-danger');
 
 
 	//for each turn, base your turn duration on the latest duration inputed by the user
@@ -75,17 +104,15 @@ function firstPlayerTurnDuration() {
 	//write the player's remaining time	
 	firstPlayerTimerDiv.innerHTML = secFirstPlayer;
 
-	//start the actual counting function
+	//start the actual counting function....by calling itself every second (recursive function)
 	timeoutFirstPlayer = setTimeout("firstPlayerTurnDuration()", 1000);
 
-	//halt the counting function if time is out
+	//halt the counting function if time is out. this is the halting condition required in any recursive function
 	if (secFirstPlayer == 0) {
 		clearTimeout(timeoutFirstPlayer);
 		secFirstPlayer = parseInt(turnLength);
 	}
 }
-
-	
 
 /*---------------------------------
 
@@ -110,6 +137,7 @@ function startSecondPlayerTimer() {
 	//reset the other player's timer and writes it 
 	clearTimeout(timeoutFirstPlayer);
 	firstPlayerTimerDiv.innerHTML = turnLength;
+	firstPlayerTimerDiv.classList.remove('text-danger');
 
 	//for each turn, base your turn duration on the latest duration inputed by the user
 	secSecondPlayer = parseInt(turnLength);
@@ -155,6 +183,17 @@ var hr = 0 ;
 var sec = 0;
 var min = 0;
 var stopTime = true;
+
+//reset all variables and timers.
+function resetTimers() {
+    clearTimeout(timeoutFirstPlayer);
+    clearTimeout(timeoutSecondPlayer);
+    firstPlayerTimerDiv.innerHTML = parseInt(turnLength);
+    secondPlayerTimerDiv.innerHTML = parseInt(turnLength);
+    firstPlayerTimerDiv.classList.remove('text-danger');
+    secondPlayerTimerDiv.classList.remove('text-danger');
+
+}
 
 //is called on any of the player's button.
 function gameDuration() {
@@ -211,10 +250,7 @@ function resetTotalPlayTimerButton (){
     min = 0;
 
     //reset all variables and timers.
-    clearTimeout(timeoutFirstPlayer);
-    clearTimeout(timeoutSecondPlayer);
-    firstPlayerTimerDiv.innerHTML = parseInt(turnLength);
-    secondPlayerTimerDiv.innerHTML = parseInt(turnLength);
+    resetTimers();
   }
 }
 
