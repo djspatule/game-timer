@@ -13,13 +13,9 @@
 	<body>
 		<div class="text-center" class="container" >
 			<h1>Gamer Timer</h1>
-			<button onclick="startFirstPlayerTimer()" class="btn btn-primary" id="startFirstPlayerTimerButton"><h3>First player</h3> <br><br> Time left:<h2><div id="firstPlayerTimerDiv"> 30 </div></h2></button>
-			<button onclick="startSecondPlayerTimer()" class="btn btn-success" id="startSecondPlayerTimerButton"><h3>Second player</h3> <br><br> Time left:<h2><div id="secondPlayerTimerDiv"> 30 </div></h2></button>
-			<br><div id="newPlayerNode"></div>
-			<br><div id="thirdPlayerDiv"></div>
-			<div id="fourthPlayerDiv"></div>
+			<div id="newPlayerNode"></div>
 			<br><button onclick="resetTotalPlayTimerButton()" class="btn btn-default" id="totalPlayTimeDisplayButton"><h3>Total play time:</h3><br>(click to reset) <br><br> <h2><div id="totalPlayTimeDisplayDiv"> 00:00:00 </div></h2></button>
-			<br><button onclick="setTurnDuration()" class="btn btn-default btn-lg" id="setTurnDurationButton">Set turn duration</button>
+			<br><button onclick="setTurnLength()" class="btn btn-default btn-lg" id="setTurnDurationButton">Set turn duration</button>
 			<br><button onclick="setNumberOfPlayers()" class="btn btn-default btn-lg" id="setNumberOfPlayersButton">Set number of players</button>
 		</div>
 	<script src="script.js"></script>
