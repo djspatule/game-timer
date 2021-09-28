@@ -24,7 +24,7 @@ var gameStart = false;
 //tentative de transformer les joueurs en objet JS
 
 function newButton() {
-	return button = `<button onclick="startPlayerTimer${this.playerNumber}()" class="btn btn-warning" id=" ${this.playerNumber} "><h3>Player ${this.playerNumber+1} </h3> <br><br> Time left:<h2><div id="thirdPlayerTimerDiv"> 30 </div></h2></button>`;
+	return button = `<button onclick="playerTimer(${this.playerNumber})" class="btn btn-warning"><h3>Player ${this.playerNumber+1} </h3> <br><br> Time left:<h2><div id="playerTimerDiv${this.playerNumber}"> 30 </div></h2></button>`;
 }
 
 
@@ -45,17 +45,33 @@ for (var i = 0; i < numberOfPlayers; i++) {
 	newPlayerNode.appendChild(players[i].div);
 }
 
-/*for (player in players) {
-player.div.innerHTML = '<button onclick="startPlayerTimer${this.playerNumber}()" class="btn btn-warning" id="startThirdPlayerTimerButton"><h3>Third player</h3> <br><br> Time left:<h2><div id="thirdPlayerTimerDiv"> 30 </div></h2></button>';
+/*---------------------------------
+	
+		Player timer - object programming try
 
-}*/
+-----------------------------------*/
 
-
-
-for (player in players) {
-clearTimeout(player.timeout);
-
+function playerTimer(id) {
+	
+	for (const player of players) {
+		clearTimeout(player.timeout);
+	}
+	players[id].sec = parseInt(turnLength);
+	playerTurnDuration(id);
 }
+
+function playerTurnDuration(id) {
+	players[id].sec -= 1;
+	var playerTimerDiv = document.getElementById("playerTimerDiv"+id)
+	playerTimerDiv.innerHTML = players[id].sec
+	players[id].timeout = setTimeout(playerTurnDuration, 1000, id);
+	if (players[id].sec == 0) {
+		clearTimeout(players[id].timeout);
+		players[id].sec = parseInt(turnLength);
+	}
+}
+
+// TODO : recopier le reste des logiques manquantes (sound playing, red letters, overall game duration, etc.).
 
 
 
