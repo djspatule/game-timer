@@ -53,8 +53,6 @@ function Player(playerNumber, timeout, sec) {
   this.newButton = newButton;
 }
 
-
-
 /*---------------------------------
 
 		Set number of players
@@ -62,16 +60,23 @@ function Player(playerNumber, timeout, sec) {
 -----------------------------------*/
 function setNumberOfPlayers() {
 	
-	//prompt the user for the number of players
-	numberOfPlayers = parseInt(window.prompt("Enter the number of players: ")); 
+	//if the function was already called before, ask for a new number of players. Ohterwise, use 2 as default value for numberOfPlayers variable
+	if (players.length != 0) {
+		//prompt the user for the number of players
+		numberOfPlayers = parseInt(window.prompt("Enter the number of players: "));
+	}
+	
+	//if the user is inputing a number of users inferior to the current number
+	if (numberOfPlayers < players.length) {
+		//remove the last player's HTML div 
+		newPlayerNode.removeChild(players[players.length-1].div);
+		//remove the last player in the array
+		players.pop();
+	}
 
 	// create the appropriate number of players with all their properties
-	for (var i = 0; i < numberOfPlayers; i++) {
+	for (var i = players.length; i < numberOfPlayers; i++) {
 		players[i] = new Player(i,0,parseInt(turnLength));
-		
-		//??maybe not neccessary anymore??
-		players[i].div.id = players[i].playerNumber;
-		
 		players[i].div.innerHTML = players[i].newButton();
 		newPlayerNode.appendChild(players[i].div);
 	}
