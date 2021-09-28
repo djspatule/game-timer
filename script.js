@@ -12,26 +12,52 @@ var numberOfPlayers = 2; // create a variable to track the number of players (an
 
 var gameStart = false;
 
+
+
+
+/*------------------------------------------
+
+		Tentative at object programming
+		based on https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Working_with_Objects
+
+-------------------------------------------*/
 //tentative de transformer les joueurs en objet JS
 
-function Player(timeout, sec, div) {
-  this.timeout = timeout;
-  this.sec =sec;
-  this.div = div
+function newButton() {
+	var button = '<button onclick="startPlayerTimer ${this.playerNumber} ()" class="btn btn-warning" id=" ${this.playerNumber} "><h3>Third player</h3> <br><br> Time left:<h2><div id="thirdPlayerTimerDiv"> 30 </div></h2></button>';
 }
 
-var player1 = new Player(0,30,document.getElementById('firstPlayerDiv'));
 
-var player1 = {};
-player1.timeout = 1;
-player1.sec = parseInt(turnLength);
-player1.div = document.getElementById('firstPlayerDiv');
+function Player(playerNumber, timeout, sec, div) {
+  this.playerNumber = playerNumber;
+  this.timeout = timeout;
+  this.sec =sec;
+  this.div = div;
+  this.newButton = newButton;
+}
 
-var players = [player1, player2]
+var newPlayerNode = document.getElementById('newPlayerNode');
+// TODO : insert into a  setNumberOfPlayers() function called upon clicking on the player number button...
+var players =[];
+var divs = [];
+for (var i = 0; i < numberOfPlayers; i++) {
+	divs[i] = document.createElement("div");
+	newPlayerNode.appendChild(divs[i]);
+	players[i] = new Player(i,0,parseInt(turnLength), divs[i]);
+	players[i].div.innerHTML = players[i].newButton();
+}
 
-for (player in players) {
+/*for (player in players) {
+player.div.innerHTML = '<button onclick="startPlayerTimer${this.playerNumber}()" class="btn btn-warning" id="startThirdPlayerTimerButton"><h3>Third player</h3> <br><br> Time left:<h2><div id="thirdPlayerTimerDiv"> 30 </div></h2></button>';
+
+}*/
+
+
+
+for (player in players) {
 clearTimeout(player.timeout);
-}
+
+}
 
 
 
