@@ -24,27 +24,25 @@ var gameStart = false;
 //tentative de transformer les joueurs en objet JS
 
 function newButton() {
-	var button = '<button onclick="startPlayerTimer ${this.playerNumber} ()" class="btn btn-warning" id=" ${this.playerNumber} "><h3>Third player</h3> <br><br> Time left:<h2><div id="thirdPlayerTimerDiv"> 30 </div></h2></button>';
+	return button = `<button onclick="startPlayerTimer${this.playerNumber}()" class="btn btn-warning" id=" ${this.playerNumber} "><h3>Player ${this.playerNumber+1} </h3> <br><br> Time left:<h2><div id="thirdPlayerTimerDiv"> 30 </div></h2></button>`;
 }
 
 
-function Player(playerNumber, timeout, sec, div) {
+function Player(playerNumber, timeout, sec) {
   this.playerNumber = playerNumber;
   this.timeout = timeout;
   this.sec =sec;
-  this.div = div;
+  this.div = document.createElement("div");
   this.newButton = newButton;
 }
 
 var newPlayerNode = document.getElementById('newPlayerNode');
 // TODO : insert into a  setNumberOfPlayers() function called upon clicking on the player number button...
 var players =[];
-var divs = [];
 for (var i = 0; i < numberOfPlayers; i++) {
-	divs[i] = document.createElement("div");
-	newPlayerNode.appendChild(divs[i]);
-	players[i] = new Player(i,0,parseInt(turnLength), divs[i]);
+	players[i] = new Player(i,0,parseInt(turnLength));
 	players[i].div.innerHTML = players[i].newButton();
+	newPlayerNode.appendChild(players[i].div);
 }
 
 /*for (player in players) {
