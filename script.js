@@ -1,3 +1,6 @@
+//all object programming based on https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Working_with_Objects
+
+
 /*---------------------------------
 
 		Variables declaration
@@ -29,6 +32,7 @@ var stopTime = true;
 
 
 /*------------------------------------------
+
 		Initiate the app with 2 players
 
 -------------------------------------------*/
@@ -36,10 +40,9 @@ var stopTime = true;
 setNumberOfPlayers();
 
 /*------------------------------------------
-		Player definition	
-		Tentative at object programming
-		based on https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Working_with_Objects
 
+		Player definition	
+		
 -------------------------------------------*/
 
 function newButton() {
@@ -93,7 +96,7 @@ function setNumberOfPlayers() {
 
 /*---------------------------------
 	
-		Miscellanous settings - dar mode, mute, etc.
+		Miscellanous settings - dark mode, mute, etc.
 
 -----------------------------------*/
 
@@ -267,8 +270,10 @@ function resetTotalPlayTimerButton (){
 
 		ToDo
 
+- put currently playing player in bold ? 
+- google analytics !
 - add a progress bar that changes color in order to visualize the time passing by ? ideally slowly empty the button of its color...
-- add to the total play time button info how long each player has played...
+- add to the player button his stat info on how long he has played total (since reset)...
 
 
 -----------------------------------*/
@@ -283,6 +288,7 @@ function resetTotalPlayTimerButton (){
 	- name on the timer 
 	- timer duration (per player....to accomodate a child or something)
 	- bonus if timer not consumed
+- add count up mode....or simply let timer go below 0
 - offer a "reserve" option like in chess to add to your next timer each time you didn't use you round's time completely ? attention pour MTG à la diff entre interruption et round, etc.
 
 
