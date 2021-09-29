@@ -76,10 +76,13 @@ function setNumberOfPlayers() {
 	
 	//if the user is inputing a number of users inferior to the current number
 	if (numberOfPlayers < players.length) {
-		//remove the last player's HTML div 
-		newPlayerNode.removeChild(players[players.length-1].div);
-		//remove the last player in the array
-		players.pop();
+		var playersToRemove = players.length - numberOfPlayers;
+		for (var i = 0; i < (playersToRemove); i++) {
+			//remove the last player's HTML div 
+			newPlayerNode.removeChild(players[players.length-1].div);
+			//remove the last player in the array
+			players.pop();	
+		}
 	}
 
 	// create the appropriate number of players with all their properties
