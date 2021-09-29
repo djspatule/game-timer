@@ -9,6 +9,7 @@ var turnLength = 30; //create a turnDuration variable
 var audio = new Audio('beep.mp3'); // create a sound variable to "beep"
 
 var isMute = false;
+var isDark = false;
 
 var numberOfPlayers = 2; // create a variable to track the number of players (and of timers)
 
@@ -42,8 +43,10 @@ setNumberOfPlayers();
 -------------------------------------------*/
 
 function newButton() {
-	//play by cycling on RGB values ? style="background-color:rgb(0,0,255)"
-	return button = `<button onclick="playerTimer(${this.playerNumber})" class="btn"><h3>Player ${this.playerNumber+1} </h3> <br><br> Time left:<h2><div id="playerTimerDiv${this.playerNumber}"> 30 </div></h2></button>`;
+	//play by cycling on RGB values ? style="background-color:rgb(${Math.floor(Math.random() * 100 + 100)},${Math.floor(Math.random() * 100 + 100)},${Math.floor(Math.random() * 100 + 100)})". *100 + 100 keeps it in a certain range of RGB that avoids too dark colors.
+	//allow user to choose color next to button?
+
+	return button = `<button onclick="playerTimer(${this.playerNumber})" class="btn" style="background-color:rgb(${Math.floor(Math.random() * 100 + 100)},${Math.floor(Math.random() * 100 + 100)},${Math.floor(Math.random() * 100 + 100)})"><h3>Player ${this.playerNumber+1} </h3> <br><br> Time left:<h2><div id="playerTimerDiv${this.playerNumber}"> 30 </div></h2></button>`;
 }
 
 
@@ -81,7 +84,47 @@ function setNumberOfPlayers() {
 		players[i] = new Player(i,0,parseInt(turnLength));
 		players[i].div.innerHTML = players[i].newButton();
 		newPlayerNode.appendChild(players[i].div);
+
+		// tentative progress bar 
+		//var progressBar = <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:40%">40%</div>
+		//
 	}
+}
+
+/*---------------------------------
+	
+		Miscellanous settings - dar mode, mute, etc.
+
+-----------------------------------*/
+
+//implement the mute button as a sort of toggle
+function mute() {
+	if (isMute == false){
+		isMute = true;
+		var muteButton = document.getElementById("muteButton")
+		muteButton.style.backgroundColor = 'grey';
+	}
+	else {
+		isMute = false;
+		var muteButton = document.getElementById("muteButton")
+		muteButton.style.backgroundColor = 'white';
+	}	
+}
+
+// implement the dark mode button as a toggle
+function dark() {
+	if (isDark == false){
+		isDark = true;
+		var darkButton = document.getElementById("darkButton")
+		darkButton.style.backgroundColor = 'grey';
+		document.body.style.backgroundColor = 'black';
+	}
+	else {
+		isDark = false;
+		var darkButton = document.getElementById("darkButton")
+		darkButton.style.backgroundColor = 'white';
+		document.body.style.backgroundColor = 'white';
+	}	
 }
 
 /*---------------------------------
@@ -89,9 +132,6 @@ function setNumberOfPlayers() {
 		Player timer - object programming try
 
 -----------------------------------*/
-function mute() {
-	isMute = true;	
-}
 
 function playerTimer(id) {
 	
@@ -116,7 +156,7 @@ function playerTurnDuration(id) {
 	//alert the user at 10 seconds to the end and in the last 3 seconds
 	if (isMute == false && (players[id].sec == 10 || players[id].sec<= 3)) {
 		audio.play();
-		playerTimerDiv.classList.remove('text-danger');
+		playerTimerDiv.classList.add('text-danger');
 	}
 
 	//could be deleted if not used...
@@ -227,8 +267,9 @@ function resetTotalPlayTimerButton (){
 
 		ToDo
 
-- add a bar that changes color in order to visualize the time passing by ? ideally slowly empty the button of its color...
-- attribute a different color to each player.... 
+- add a progress bar that changes color in order to visualize the time passing by ? ideally slowly empty the button of its color...
+- add to the total play time button info how long each player has played...
+
 
 -----------------------------------*/
 
@@ -236,11 +277,13 @@ function resetTotalPlayTimerButton (){
 /*---------------------------------
 
 		Backlog
+- dark mode to reduce battery usage on OLEDs during long games.
 - Custo : 
 	- timer color
 	- name on the timer 
-	- timer duration
+	- timer duration (per player....to accomodate a child or something)
 	- bonus if timer not consumed
-	- what happens when over ? 
+- offer a "reserve" option like in chess to add to your next timer each time you didn't use you round's time completely ? attention pour MTG à la diff entre interruption et round, etc.
+
 
 -----------------------------------*/
