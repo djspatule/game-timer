@@ -8,17 +8,19 @@ var turnLength = 30; //create a turnDuration variable
 
 var audio = new Audio('beep.mp3'); // create a sound variable to "beep"
 
+var isMute = false;
+
 var numberOfPlayers = 2; // create a variable to track the number of players (and of timers)
 
 var gameStart = false;
 
 var newPlayerNode = document.getElementById('newPlayerNode');
 
-var players =[];
+var players = [];
 
 var totalPlayTimeDisplayDiv = document.getElementById('totalPlayTimeDisplayDiv');
 
-var hr = 0 ;
+var hr = 0;
 var sec = 0;
 var min = 0;
 
@@ -87,6 +89,9 @@ function setNumberOfPlayers() {
 		Player timer - object programming try
 
 -----------------------------------*/
+function mute() {
+	isMute = true;	
+}
 
 function playerTimer(id) {
 	
@@ -106,16 +111,16 @@ function playerTurnDuration(id) {
 	
 	//decrement player's time
 	players[id].sec -= 1;
-	var playerTimerDiv = document.getElementById("playerTimerDiv"+id)
+	var playerTimerDiv = document.getElementById("playerTimerDiv"+id);
 	
 	//alert the user at 10 seconds to the end and in the last 3 seconds
-	if (players[id].sec == 10 || players[id].sec<= 3) {
+	if (isMute == false && (players[id].sec == 10 || players[id].sec<= 3)) {
 		audio.play();
 		playerTimerDiv.classList.remove('text-danger');
 	}
 
 	//could be deleted if not used...
-	playerTimerDiv.innerHTML = players[id].sec
+	playerTimerDiv.innerHTML = players[id].sec;
 	
 	//start the actual counting function....by calling itself every second (recursive function)
 	players[id].timeout = setTimeout(playerTurnDuration, 1000, id);
