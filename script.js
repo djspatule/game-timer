@@ -24,6 +24,10 @@ var players = [];
 
 var totalPlayTimeDisplayDiv = document.getElementById('totalPlayTimeDisplayDiv');
 
+var r = 0;
+var g = 0;
+var b = 0;
+
 var hr = 0;
 var sec = 0;
 var min = 0;
@@ -46,15 +50,19 @@ setNumberOfPlayers();
 -------------------------------------------*/
 
 function newButton() {
-	//play by cycling on RGB values ? style="background-color:rgb(${Math.floor(Math.random() * 100 + 100)},${Math.floor(Math.random() * 100 + 100)},${Math.floor(Math.random() * 100 + 100)})". *100 + 100 keeps it in a certain range of RGB that avoids too dark colors.
-	//allow user to choose color next to button?
-
-	return button = `<button onclick="playerTimer(${this.playerNumber})" class="btn" style="background-color:rgb(${Math.floor(Math.random() * 100 + 100)},${Math.floor(Math.random() * 100 + 100)},${Math.floor(Math.random() * 100 + 100)})"><h3>Player ${this.playerNumber+1} </h3> <br><br> Time left:<h2><div id="playerTimerDiv${this.playerNumber}"> 30 </div></h2></button>`;
+	
+	r = Math.floor(Math.random() * 100 + 100)
+	g = Math.floor(Math.random() * 100 + 100)
+	b = Math.floor(Math.random() * 100 + 100)
+	this.rgb = "rgb(" + r + ","  + g + "," + b + ")";
+	
+	return button = `<button onclick="playerTimer(${this.playerNumber})" class="btn" style="background-color:${this.rgb}"><h3>Player ${this.playerNumber+1} </h3> <br><br> Time left:<h2><div id="playerTimerDiv${this.playerNumber}"> 30 </div></h2></button>`;
 }
 
 
 function Player(playerNumber, timeout, sec) {
   this.playerNumber = playerNumber;
+  this.rgb
   this.timeout = timeout;
   this.sec =sec;
   this.div = document.createElement("div");
@@ -87,8 +95,16 @@ function setNumberOfPlayers() {
 
 	// create the appropriate number of players with all their properties
 	for (var i = players.length; i < numberOfPlayers; i++) {
+		//instantiate player objects
 		players[i] = new Player(i,0,parseInt(turnLength));
+
+		//Id their div with their player numer (0 indexed!!!)
+		players[i].div.id = players[i].playerNumber;
+
+		//populate "their div" with the various contents
 		players[i].div.innerHTML = players[i].newButton();
+
+		//add the div to the DOM
 		newPlayerNode.appendChild(players[i].div);
 
 		// tentative progress bar 
