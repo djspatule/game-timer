@@ -222,7 +222,6 @@ function resetTotalPlayTimerButton (){
 
 		ToDo
 
-- erase old timers when changing the number of players (reload page?)
 - add a bar that changes color in order to visualize the time passing by ? ideally slowly empty the button of its color...
 - attribute a different color to each player.... 
 
