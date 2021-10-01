@@ -49,6 +49,7 @@ darkButton.addEventListener('click', dark);
 var muteButton = document.getElementById("muteButton");
 muteButton.addEventListener('click', mute);
 
+
 /*------------------------------------------
 
 		Initiate the app with 2 players
@@ -86,6 +87,14 @@ function newButton() {
 	b = Math.floor(Math.random() * 100 + 100)
 	this.rgb = "rgb(" + r + ","  + g + "," + b + ")";
 	
+	//find a way to avoid this dirty way of creating a large button ? ask Karine... with an event listener for the click on a div, it could be easier...and it works with following code...but i am not sure that it's something "usual"...ask Karine.
+
+/*//TEST
+var test = document.getElementById("test");
+test.addEventListener('click', function() {
+	test.style.backgroundColor = 'black';
+});
+*/
 	return button = `<button onclick="playerTimer(${this.playerNumber})" class="btn" style="background-color:${this.rgb}" id="player${this.playerNumber}Button"><h3>Player ${this.playerNumber+1} </h3> Total time played :<div id="totalPlayerTimeDiv${this.playerNumber}"></div>   <br><br> Time left:<h2><div id="playerTimerDiv${this.playerNumber}"> 30 </div></h2></button>`;
 }
 
@@ -250,7 +259,6 @@ function setTurnLength() {
 
 -----------------------------------*/
 
-//AAAAAHHHHHHHHHHH, completely redo and just add to the player timer the seconds that you take from it in the playerTurnDuration function ....
 
 //recursive function in order to keep the timer going. Stoped by changing the value of stopPlayerTime
 function playerDuration(id) {
@@ -371,11 +379,11 @@ function resetTotalPlayTimer (){
 
 		ToDo
 
-- créer VF du logiciel
-- calculer le temps total par joueur
-- set une limite de temps par joueur
-- put currently playing player in bold ? 
 - google analytics !
+- créer un toggle button qui passe d'un mode timer (le temps descends) à un mode stopwatch (le temps monte...ou va en dessous de 0)
+- créer un toggle buttin qui passe d'un mode turn based (les bips sont liés au temps dans le tour) à un mode game-based (les bips sont liés au temps total de la partie qui est donc limité)
+- put currently playing player in bold ? 
+- créer une version française du site
 - add a progress bar that changes color in order to visualize the time passing by ? ideally slowly empty the button of its color...
 - add to the player button his stat info on how long he has played total (since reset)...
 
