@@ -28,9 +28,9 @@ var r = 0;
 var g = 0;
 var b = 0;
 
-var hr = 0;
-var sec = 0;
-var min = 0;
+var gameHr = 0;
+var gameSec = 0;
+var gameMin = 0;
 
 var stopTime = true;
 
@@ -57,6 +57,22 @@ muteButton.addEventListener('click', mute);
 
 setNumberOfPlayers();
 
+
+/*------------------------------------------
+
+		Helper function to reset timers
+
+-------------------------------------------*/
+//reset all variables and timers.
+function resetTimers() {
+    for (const player of players) {
+		clearTimeout(player.timeout);
+		player.sec = parseInt(turnLength);
+		document.getElementById("playerTimerDiv"+player.playerNumber).innerHTML = turnLength;
+		document.getElementById("playerTimerDiv"+player.playerNumber).classList.remove('text-danger');
+	}
+}
+
 /*------------------------------------------
 
 		Player definition	
@@ -70,7 +86,7 @@ function newButton() {
 	b = Math.floor(Math.random() * 100 + 100)
 	this.rgb = "rgb(" + r + ","  + g + "," + b + ")";
 	
-	return button = `<button onclick="playerTimer(${this.playerNumber})" class="btn" style="background-color:${this.rgb}" id="player${this.playerNumber}Button"><h3>Player ${this.playerNumber+1} </h3> <br><br> Time left:<h2><div id="playerTimerDiv${this.playerNumber}"> 30 </div></h2></button>`;
+	return button = `<button onclick="playerTimer(${this.playerNumber})" class="btn" style="background-color:${this.rgb}" id="player${this.playerNumber}Button"><h3>Player ${this.playerNumber+1} </h3> Total time played :<div id="totalPlayerTimeDiv${this.playerNumber}"></div>   <br><br> Time left:<h2><div id="playerTimerDiv${this.playerNumber}"> 30 </div></h2></button>`;
 }
 
 
@@ -78,7 +94,11 @@ function Player(playerNumber, timeout, sec) {
   this.playerNumber = playerNumber;
   this.rgb
   this.timeout = timeout;
-  this.sec =sec;
+  this.sec = sec;
+  this.stopPlayerTime = true;
+  this.playerHr = 0;
+  this.playerMin = 0;
+  this.playerSec = 0;
   this.div = document.createElement("div");
   this.newButton = newButton;
 }
@@ -172,6 +192,7 @@ function playerTimer(id) {
 	if (gameStart == false) {
 		gameStart = true;
 		gameDuration();
+		playerDuration(id);
 	}
 
 	resetTimers();
@@ -223,19 +244,60 @@ function setTurnLength() {
 
 /*---------------------------------
 
-		TOTAL PLAY TIME
+		TOTAL PLAYERS TIME
 
 -----------------------------------*/
 
-//reset all variables and timers.
-function resetTimers() {
-    for (const player of players) {
-		clearTimeout(player.timeout);
-		player.sec = parseInt(turnLength);
-		document.getElementById("playerTimerDiv"+player.playerNumber).innerHTML = turnLength;
-		document.getElementById("playerTimerDiv"+player.playerNumber).classList.remove('text-danger');
+//recursive function in order to keep the timer going. Stoped by changing the value of stopPlayerTime
+function playerDuration(id) {
+	for (player of players) {
+		if (player.playerNumber == id) {
+			players[id].stopPlayerTime = false;
+		}
 	}
+
+	if (players[id].stopPlayerTime == false) {
+	    players[id].playerSec = parseInt(players[id].playerSec);
+	    players[id].playerMin = parseInt(players[id].playerMin);
+	    players[id].playerHr = parseInt(players[id].playerHr);
+
+	   players[id].playerSec += 1;
+
+	    if (players[id].playerSec == 60) {
+	      players[id].playerMin = players[id].playerMin + 1;
+	      players[id].playerSec = 0;
+	    }
+	    if (players[id].gameMin == 60) {
+	      players[id].playerHr = players[id].playerHr + 1;
+	      players[id].playerMin = 0;
+	      players[id].playerSec = 0;
+	    }
+
+	    // de manière à ajouter un 0 manuellement devant le chiffre des heures/minutes/secondes lorsqu'elles sont inférieurs à 10.
+	    if (players[id].playerSec < 10 || players[id].playerSec == 0) {
+	      players[id].playerSec = '0' + players[id].playerSec;
+	    }
+	    if (players[id].playerMin < 10 || players[id].playerMin == 0) {
+	      players[id].playerMin = '0' + players[id].playerMin;
+	    }
+	    if (players[id].playerHr < 10 || players[id].playerHr == 0) {
+	      players[id].playerHr = '0' + players[id].playerHr;
+	    }
+
+	   	var divString = "totalPlayerTimeDiv" + id;
+	    players[id].totalPlayerTimeDiv = document.getElementById(divString);
+	    players[id].totalPlayerTimeDiv.innerHTML = players[id].playerHr + ':' + players[id].playerMin + ':' + players[id].playerSec;
+
+	    setTimeout(playerDuration, 1000, id);
+	}
+	
 }
+
+/*---------------------------------
+
+		TOTAL PLAY TIME
+
+-----------------------------------*/
 
 //is called on any of the player's button.
 function gameDuration() {
@@ -245,51 +307,67 @@ function gameDuration() {
     }
 }
 
+//recursive function in order to keep the timer going. Stoped by changing the value of stopTime
 function timerCycle() {
 	if (stopTime == false) {
-	    sec = parseInt(sec);
-	    min = parseInt(min);
-	    hr = parseInt(hr);
+	    gameSec = parseInt(gameSec);
+	    gameMin = parseInt(gameMin);
+	    gameHr = parseInt(gameHr);
 
-	    sec = sec + 1;
+	    gameSec += 1;
 
-	    if (sec == 60) {
-	      min = min + 1;
-	      sec = 0;
+	    if (gameSec == 60) {
+	      gameMin = gameMin + 1;
+	      gameSec = 0;
 	    }
-	    if (min == 60) {
-	      hr = hr + 1;
-	      min = 0;
-	      sec = 0;
+	    if (gameMin == 60) {
+	      gameHr = gameHr + 1;
+	      gameMin = 0;
+	      gameSec = 0;
 	    }
 
 	    // de manière à ajouter un 0 manuellement devant le chiffre des heures/minutes/secondes lorsqu'elles sont inférieurs à 10.
-	    if (sec < 10 || sec == 0) {
-	      sec = '0' + sec;
+	    if (gameSec < 10 || gameSec == 0) {
+	      gameSec = '0' + gameSec;
 	    }
-	    if (min < 10 || min == 0) {
-	      min = '0' + min;
+	    if (gameMin < 10 || gameMin == 0) {
+	      gameMin = '0' + gameMin;
 	    }
-	    if (hr < 10 || hr == 0) {
-	      hr = '0' + hr;
+	    if (gameHr < 10 || gameHr == 0) {
+	      gameHr = '0' + gameHr;
 	    }
 
-	    totalPlayTimeDisplayDiv.innerHTML = hr + ':' + min + ':' + sec;
+	    totalPlayTimeDisplayDiv.innerHTML = gameHr + ':' + gameMin + ':' + gameSec;
 
 	    setTimeout("timerCycle()", 1000);
 	}
 }
 
+/*---------------------------------
+
+		reset timers
+
+-----------------------------------*/
 
 //called on click of the totalPlayTime button.
 function resetTotalPlayTimer (){
 	if (stopTime == false) {
 	    stopTime = true;
 	    gameStart = false;
+	    for (player of players) {
+	    	player.stopPlayerTime = true;
+	    }
 	    totalPlayTimeDisplayDiv.innerHTML = "00:00:00";
-	    hr = 0;
-	    sec = 0;
-	    min = 0;
+	    gameHr = 0;
+	    gameMin = 0;
+	    gameSec = 0;
+	    
+	    //also resets players timers
+	    for (player of players) {
+	    	player.playerSec = 0;
+	    	player.playerMin = 0;
+	    	player.playerHr = 0;
+	    }
 
 	    //reset all variables and timers.
 	    resetTimers();
