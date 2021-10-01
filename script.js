@@ -34,6 +34,20 @@ var min = 0;
 
 var stopTime = true;
 
+var setNumberOfPlayersButton = document.getElementById("setNumberOfPlayersButton");
+setNumberOfPlayersButton.addEventListener('click', setNumberOfPlayers);
+
+var setTurnLengthButton = document.getElementById("setTurnLengthButton");
+setTurnLengthButton.addEventListener('click', setTurnLength);
+
+var totalPlayTimeButton = document.getElementById("totalPlayTimeButton");
+totalPlayTimeButton.addEventListener('click', resetTotalPlayTimer);
+
+var darkButton = document.getElementById("darkButton");
+darkButton.addEventListener('click', dark);
+
+var muteButton = document.getElementById("muteButton");
+muteButton.addEventListener('click', mute);
 
 /*------------------------------------------
 
@@ -56,7 +70,7 @@ function newButton() {
 	b = Math.floor(Math.random() * 100 + 100)
 	this.rgb = "rgb(" + r + ","  + g + "," + b + ")";
 	
-	return button = `<button onclick="playerTimer(${this.playerNumber})" class="btn" style="background-color:${this.rgb}"><h3>Player ${this.playerNumber+1} </h3> <br><br> Time left:<h2><div id="playerTimerDiv${this.playerNumber}"> 30 </div></h2></button>`;
+	return button = `<button onclick="playerTimer(${this.playerNumber})" class="btn" style="background-color:${this.rgb}" id="player${this.playerNumber}Button"><h3>Player ${this.playerNumber+1} </h3> <br><br> Time left:<h2><div id="playerTimerDiv${this.playerNumber}"> 30 </div></h2></button>`;
 }
 
 
@@ -74,7 +88,8 @@ function Player(playerNumber, timeout, sec) {
 		Set number of players
 
 -----------------------------------*/
-function setNumberOfPlayers() {
+
+	function setNumberOfPlayers() {
 	
 	//if the function was already called before, ask for a new number of players. Ohterwise, use 2 as default value for numberOfPlayers variable
 	if (players.length != 0) {
@@ -123,12 +138,10 @@ function setNumberOfPlayers() {
 function mute() {
 	if (isMute == false){
 		isMute = true;
-		var muteButton = document.getElementById("muteButton")
 		muteButton.style.backgroundColor = 'grey';
 	}
 	else {
 		isMute = false;
-		var muteButton = document.getElementById("muteButton")
 		muteButton.style.backgroundColor = 'white';
 	}	
 }
@@ -137,13 +150,11 @@ function mute() {
 function dark() {
 	if (isDark == false){
 		isDark = true;
-		var darkButton = document.getElementById("darkButton")
 		darkButton.style.backgroundColor = 'grey';
 		document.body.style.backgroundColor = 'black';
 	}
 	else {
 		isDark = false;
-		var darkButton = document.getElementById("darkButton")
 		darkButton.style.backgroundColor = 'white';
 		document.body.style.backgroundColor = 'white';
 	}	
@@ -271,7 +282,7 @@ function timerCycle() {
 
 
 //called on click of the totalPlayTime button.
-function resetTotalPlayTimerButton (){
+function resetTotalPlayTimer (){
 	if (stopTime == false) {
 	    stopTime = true;
 	    gameStart = false;
@@ -289,6 +300,9 @@ function resetTotalPlayTimerButton (){
 
 		ToDo
 
+- créer VF du logiciel
+- calculer le temps total par joueur
+- set une limite de temps par joueur
 - put currently playing player in bold ? 
 - google analytics !
 - add a progress bar that changes color in order to visualize the time passing by ? ideally slowly empty the button of its color...

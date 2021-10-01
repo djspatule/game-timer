@@ -12,12 +12,14 @@
 	</head>
 	<body>
 		<div class="text-center container">
-			<h1>Gamer Timer</h1>  <button class="btn"><a href="html/about.html" class="glyphicon glyphicon-info-sign"></a></button> <button onclick="mute()" class="btn glyphicon glyphicon-volume-off" id="muteButton"></button>
-			<button onclick="dark()" class="btn glyphicon glyphicon-certificate" id="darkButton"></button>
+			<h1>Gamer Timer</h1>  
+			<button class="btn"><a href="html/about.html" class="glyphicon glyphicon-info-sign"></a></button>
+			<button class="btn glyphicon glyphicon-volume-off" id="muteButton"></button>
+			<button class="btn glyphicon glyphicon-certificate" id="darkButton"></button>
 			<div id="newPlayerNode"></div>
-			<br><button onclick="resetTotalPlayTimerButton()" class="btn btn-default" id="totalPlayTimeDisplayButton"><h3>Total play time:</h3><br>(click to reset) <br><br> <h2><div id="totalPlayTimeDisplayDiv"> 00:00:00 </div></h2></button>
-			<br><button onclick="setTurnLength()" class="btn btn-default btn-lg" id="setTurnDurationButton">Set turn duration</button>
-			<br><button onclick="setNumberOfPlayers()" class="btn btn-default btn-lg" id="setNumberOfPlayersButton">Set number of players</button>
+			<br><button class="btn btn-default" id="totalPlayTimeButton"><h3>Total play time:</h3><br>(click to reset) <br><br> <h2><div id="totalPlayTimeDisplayDiv"> 00:00:00 </div></h2></button>
+			<br><button class="btn btn-default btn-lg" id="setTurnLengthButton">Set turn duration</button>
+			<br><button class="btn btn-default btn-lg" id="setNumberOfPlayersButton">Set number of players</button>
 		</div>
 	<script src="script.js"></script>
 	</body>
