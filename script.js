@@ -192,7 +192,6 @@ function playerTimer(id) {
 	if (gameStart == false) {
 		gameStart = true;
 		gameDuration();
-		playerDuration(id);
 	}
 
 	resetTimers();
@@ -203,8 +202,11 @@ function playerTimer(id) {
 
 function playerTurnDuration(id) {
 	
-	//decrement player's time
+	//decrement player's turn time
 	players[id].sec -= 1;
+	//increment player's total time
+	playerDuration(id);
+
 	var playerTimerDiv = document.getElementById("playerTimerDiv"+id);
 	
 	//alert the user at 10 seconds to the end and in the last 3 seconds
@@ -248,49 +250,40 @@ function setTurnLength() {
 
 -----------------------------------*/
 
+//AAAAAHHHHHHHHHHH, completely redo and just add to the player timer the seconds that you take from it in the playerTurnDuration function ....
+
 //recursive function in order to keep the timer going. Stoped by changing the value of stopPlayerTime
 function playerDuration(id) {
-	for (player of players) {
-		if (player.playerNumber == id) {
-			players[id].stopPlayerTime = false;
-		}
-	}
+    players[id].playerSec = parseInt(players[id].playerSec);
+    players[id].playerMin = parseInt(players[id].playerMin);
+    players[id].playerHr = parseInt(players[id].playerHr);
 
-	if (players[id].stopPlayerTime == false) {
-	    players[id].playerSec = parseInt(players[id].playerSec);
-	    players[id].playerMin = parseInt(players[id].playerMin);
-	    players[id].playerHr = parseInt(players[id].playerHr);
+    players[id].playerSec += 1;
 
-	   players[id].playerSec += 1;
+    if (players[id].playerSec == 60) {
+      players[id].playerMin = players[id].playerMin + 1;
+      players[id].playerSec = 0;
+    }
+    if (players[id].gameMin == 60) {
+      players[id].playerHr = players[id].playerHr + 1;
+      players[id].playerMin = 0;
+      players[id].playerSec = 0;
+    }
 
-	    if (players[id].playerSec == 60) {
-	      players[id].playerMin = players[id].playerMin + 1;
-	      players[id].playerSec = 0;
-	    }
-	    if (players[id].gameMin == 60) {
-	      players[id].playerHr = players[id].playerHr + 1;
-	      players[id].playerMin = 0;
-	      players[id].playerSec = 0;
-	    }
+    // de manière à ajouter un 0 manuellement devant le chiffre des heures/minutes/secondes lorsqu'elles sont inférieurs à 10.
+    if (players[id].playerSec < 10 || players[id].playerSec == 0) {
+      players[id].playerSec = '0' + players[id].playerSec;
+    }
+    if (players[id].playerMin < 10 || players[id].playerMin == 0) {
+      players[id].playerMin = '0' + players[id].playerMin;
+    }
+    if (players[id].playerHr < 10 || players[id].playerHr == 0) {
+      players[id].playerHr = '0' + players[id].playerHr;
+    }
 
-	    // de manière à ajouter un 0 manuellement devant le chiffre des heures/minutes/secondes lorsqu'elles sont inférieurs à 10.
-	    if (players[id].playerSec < 10 || players[id].playerSec == 0) {
-	      players[id].playerSec = '0' + players[id].playerSec;
-	    }
-	    if (players[id].playerMin < 10 || players[id].playerMin == 0) {
-	      players[id].playerMin = '0' + players[id].playerMin;
-	    }
-	    if (players[id].playerHr < 10 || players[id].playerHr == 0) {
-	      players[id].playerHr = '0' + players[id].playerHr;
-	    }
+    players[id].totalPlayerTimeDiv = document.getElementById("totalPlayerTimeDiv" + id);
+    players[id].totalPlayerTimeDiv.innerHTML = players[id].playerHr + ':' + players[id].playerMin + ':' + players[id].playerSec;
 
-	   	var divString = "totalPlayerTimeDiv" + id;
-	    players[id].totalPlayerTimeDiv = document.getElementById(divString);
-	    players[id].totalPlayerTimeDiv.innerHTML = players[id].playerHr + ':' + players[id].playerMin + ':' + players[id].playerSec;
-
-	    setTimeout(playerDuration, 1000, id);
-	}
-	
 }
 
 /*---------------------------------
