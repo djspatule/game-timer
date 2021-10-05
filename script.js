@@ -87,15 +87,33 @@ function newButton() {
 	b = Math.floor(Math.random() * 100 + 100)
 	this.rgb = "rgb(" + r + ","  + g + "," + b + ")";
 	
-	//find a way to avoid this dirty way of creating a large button ? ask Karine... with an event listener for the click on a div, it could be easier...and it works with following code...but i am not sure that it's something "usual"...ask Karine.
-
+//find a way to avoid this dirty way of creating a large button ? ask Karine... with an event listener for the click on a div, it could be easier...and it works with following code...but i am not sure that it's something "usual"...ask Karine.
 /*//TEST
 var test = document.getElementById("test");
 test.addEventListener('click', function() {
 	test.style.backgroundColor = 'black';
 });
 */
-	return button = `<button onclick="playerTimer(${this.playerNumber})" class="btn" style="background-color:${this.rgb}" id="player${this.playerNumber}Button"><h3>Player ${this.playerNumber+1} </h3> Total time played :<div id="totalPlayerTimeDiv${this.playerNumber}"></div>   <br><br> Time left:<h2><div id="playerTimerDiv${this.playerNumber}"> 30 </div></h2></button>`;
+
+	return button = `<br>
+		<button onclick="playerTimer(${this.playerNumber})" type="button" class="button" style="background-color:${this.rgb}" id="player${this.playerNumber}Button">
+			<div class="button__progress">
+				<span class="button__text">
+					<h3>Player ${this.playerNumber+1} </h3>
+					Total time played:
+					<div id="totalPlayerTimeDiv${this.playerNumber}">
+						00:00:00
+					</div>
+					<br>
+					Time left:
+					<h2>
+						<div id="playerTimerDiv${this.playerNumber}">
+							30 
+						</div>
+					</h2>
+				</span>
+			</div>
+		</button>`;
 }
 
 
@@ -217,6 +235,11 @@ function playerTurnDuration(id) {
 	playerDuration(id);
 
 	var playerTimerDiv = document.getElementById("playerTimerDiv"+id);
+
+	//update progress bar
+	var playerButton = document.getElementById("player"+id+"Button");
+	var progress = (1-(players[id].sec/parseInt(turnLength)))*100
+	playerButton.querySelector(".button__progress").style.height = `${progress}%`;
 	
 	//alert the user at 10 seconds to the end and in the last 3 seconds
 	if (isMute == false && (players[id].sec == 10 || players[id].sec<= 3)) {
@@ -379,12 +402,11 @@ function resetTotalPlayTimer (){
 
 		ToDo
 
-- google analytics !
+- add a progress bar that changes color in order to visualize the time passing by ? ideally slowly empty the button of its color...
 - créer un toggle button qui passe d'un mode timer (le temps descends) à un mode stopwatch (le temps monte...ou va en dessous de 0)
 - créer un toggle buttin qui passe d'un mode turn based (les bips sont liés au temps dans le tour) à un mode game-based (les bips sont liés au temps total de la partie qui est donc limité)
 - put currently playing player in bold ? 
 - créer une version française du site
-- add a progress bar that changes color in order to visualize the time passing by ? ideally slowly empty the button of its color...
 - add to the player button his stat info on how long he has played total (since reset)...
 
 
