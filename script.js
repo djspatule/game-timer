@@ -20,7 +20,7 @@ var gameStart = false;
 
 var newPlayerNode = document.getElementById('newPlayerNode');
 
-var players = [];
+const players = [];
 
 var totalPlayTimeDisplayDiv = document.getElementById('totalPlayTimeDisplayDiv');
 
@@ -96,9 +96,9 @@ test.addEventListener('click', function() {
 */
 
 	return button = `<br>
-		<button onclick="playerTimer(${this.playerNumber})" type="button" class="button" style="background-color:${this.rgb}" id="player${this.playerNumber}Button">
-			<div class="button__progress">
-				<span class="button__text">
+		<button onclick="playerTimer(${this.playerNumber})" type="button" class="progressButton" style="background-color:${this.rgb}" id="player${this.playerNumber}Button">
+			<div class="progressButton__progress">
+				<span class="progressButton__text">
 					<h3>Player ${this.playerNumber+1} </h3>
 					Total time played:
 					<div id="totalPlayerTimeDiv${this.playerNumber}">
@@ -240,7 +240,7 @@ function playerTurnDuration(id) {
 	//update progress bar
 	var playerButton = document.getElementById("player"+id+"Button");
 	var progress = (1-(players[id].sec/parseInt(turnLength)))*100
-	playerButton.querySelector(".button__progress").style.height = `${progress}%`;
+	playerButton.querySelector(".progressButton__progress").style.height = `${progress}%`;
 	
 	//alert the user at 10 seconds to the end and in the last 3 seconds
 	if (isMute == false && (players[id].sec == 10 || players[id].sec<= 3)) {
@@ -254,6 +254,7 @@ function playerTurnDuration(id) {
 	//start the actual counting function....by calling itself every second (recursive function)
 	players[id].timeout = setTimeout(playerTurnDuration, 1000, id);
 
+	//comment that function to get turns in the negative...
 	//halt the counting function if time is out. this is the halting condition required in any recursive function
 	if (players[id].sec == 0) {
 		clearTimeout(players[id].timeout);
@@ -402,11 +403,10 @@ function resetTotalPlayTimer (){
 /*---------------------------------
 
 		ToDo
-- créer un toggle button qui passe d'un mode timer (le temps descends) à un mode stopwatch (le temps monte...ou va en dessous de 0)
-- créer un toggle button qui passe d'un mode turn based (les bips sont liés au temps dans le tour) à un mode game-based (les bips sont liés au temps total de la partie qui est donc limité)
+- créer un radio button qui passe d'un mode timer (le temps descends) à un mode stopwatch (le temps monte...ou va en dessous de 0)
+- créer un radio button qui passe d'un mode turn based (les bips sont liés au temps dans le tour) à un mode game-based (les bips sont liés au temps total de la partie qui est donc limité)
 - créer une version française du site
-- Add a pause button accessible everywhere no matter how many players...? not so sure....not so strange to consider that the players who wants to pause the game does so after its turn, before clicking the next player's button...
-
+- Add a pause button accessible everywhere no matter how many players...? not so sure....not so strange to consider that the players who wants to pause the game does so after its turn, before clicking the next player's button...but only if turn timers don't go in the negatives
 
 -----------------------------------*/
 
@@ -414,14 +414,10 @@ function resetTotalPlayTimer (){
 /*---------------------------------
 
 		Backlog
-- dark mode to reduce battery usage on OLEDs during long games.
 - Custo : 
 	- timer color
 	- name on the timer 
 	- timer duration (per player....to accomodate a child or something)
 	- bonus if timer not consumed
-- add count up mode....or simply let timer go below 0
-- offer a "reserve" option like in chess to add to your next timer each time you didn't use you round's time completely ? attention pour MTG à la diff entre interruption et round, etc.
-
 
 -----------------------------------*/
