@@ -11,7 +11,7 @@ var turnLength = 30; //create a turnDuration variable
 
 var audio = new Audio('beep.mp3'); // create a sound variable to "beep"
 
-var isMute = false;
+var isMute = true;
 var isDark = false;
 
 var numberOfPlayers = 2; // create a variable to track the number of players (and of timers)
@@ -189,6 +189,7 @@ function mute() {
 	}
 	else {
 		isMute = false;
+		audio.play();
 		muteButton.style.backgroundColor = 'white';
 	}	
 }
@@ -401,13 +402,10 @@ function resetTotalPlayTimer (){
 /*---------------------------------
 
 		ToDo
-
-- add a progress bar that changes color in order to visualize the time passing by ? ideally slowly empty the button of its color...
 - créer un toggle button qui passe d'un mode timer (le temps descends) à un mode stopwatch (le temps monte...ou va en dessous de 0)
-- créer un toggle buttin qui passe d'un mode turn based (les bips sont liés au temps dans le tour) à un mode game-based (les bips sont liés au temps total de la partie qui est donc limité)
-- put currently playing player in bold ? 
+- créer un toggle button qui passe d'un mode turn based (les bips sont liés au temps dans le tour) à un mode game-based (les bips sont liés au temps total de la partie qui est donc limité)
 - créer une version française du site
-- add to the player button his stat info on how long he has played total (since reset)...
+- Add a pause button accessible everywhere no matter how many players...? not so sure....not so strange to consider that the players who wants to pause the game does so after its turn, before clicking the next player's button...
 
 
 -----------------------------------*/
