@@ -50,15 +50,25 @@
 			.progressButton__text {
 				position: relative;
 			}
+
+			.big {
+			    display: block;
+			    font-size: 1.17em;
+			    margin-top: 1em;
+			    margin-bottom: 0.5em;
+			    margin-left: 0;
+			    margin-right: 0;
+			    font-weight: bold;
+			}
      	</style>
 		
 		<title>
-			Game Timer
+			TableTop-Timer
 		</title>
 	</head>
 	<body>
 		<div class="text-center container">
-			<h1>Gamer Timer</h1>
+			<h1>TableTop-Timer <small class="test-muted"><a href="html/about.html" class="bi bi-info-circle"></a></small></h1>
 			<button class="btn btn-outline-secondary bi bi-gear" type="button" data-toggle="collapse" data-target="#settingsDiv" aria-expanded="false" aria-controls="collapseExample" id="settingsButton"></button>
 			<button class="btn btn-secondary bi bi-volume-mute-fill" id="muteButton"></button> <!-- style="background-color: blue" -->
 			<button class="btn btn-outline-secondary bi bi-moon-fill" id="darkButton"></button>
@@ -72,22 +82,15 @@
 			<br>
 			<div class="collapse" id="settingsDiv">
 				<div class="card card-body col-6 offset-3">
-					<a href="html/about.html" class="btn btn-outline-secondary bi bi-info-circle"> About</a>
+					<!-- <a href="html/about.html" class="btn btn-outline-secondary bi bi-info-circle"> About</a> -->
 					<br>
 					<div class="dropdown">
 						<button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" id="playerSettingsButton" aria-haspopup="true" aria-expanded="false">
 							Player settings
 						</button>
-						<form class="dropdown-menu p-4" id="dropDownForm">
-							<div class="form-group" id="playerNameForm">
-								<label for="exampleDropdownFormEmail2">Email address</label>
-								<input type="email" class="form-control" id="exampleDropdownFormEmail2" placeholder="email@example.com">
-							</div>
-							<div class="form-group">
-								<label for="exampleDropdownFormPassword2">Password</label>
-								<input type="password" class="form-control" id="exampleDropdownFormPassword2" placeholder="Password">
-							</div>
-							<button type="submit" class="btn btn-primary">Confirm</button>
+						<form class="dropdown-menu p-4" id="dropDownForm" name="playerSettingsForm">
+							<div id="dropDownFormGroup"></div>
+							<button type="button" class="btn btn-primary" id="playersNamesSubmissionButton">Confirm</button>
 						</form>
 					</div>
 					<br>

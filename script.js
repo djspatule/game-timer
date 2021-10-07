@@ -21,6 +21,9 @@ var numberOfPlayers = 2; // create a variable to track the number of players (an
 var gameStart = false;
 
 var newPlayerNode = document.getElementById('newPlayerNode');
+var dropDownForm = document.getElementById('dropDownForm');
+var dropDownFormGroup = document.getElementById('dropDownFormGroup');
+
 
 const players = [];
 
@@ -56,6 +59,10 @@ settingsButton.addEventListener('click', collapse);
 
 var playerSettingsButton = document.getElementById("playerSettingsButton");
 playerSettingsButton.addEventListener('click', showDropDown);
+
+var playersNamesSubmissionButton = document.getElementById("playersNamesSubmissionButton");
+playersNamesSubmissionButton.addEventListener('click', registerPlayersSettings);
+
 
 
 /*------------------------------------------
@@ -95,30 +102,33 @@ function newButton() {
 	b = Math.floor(Math.random() * 100 + 100)
 	this.rgb = "rgb(" + r + ","  + g + "," + b + ")";
 	
-//find a way to avoid this dirty way of creating a large button ? ask Karine... with an event listener for the click on a div, it could be easier...and it works with following code...but i am not sure that it's something "usual"...ask Karine.
-/*//TEST
+
+/*------------------------------------------
+TODO : find a way to avoid this dirty way of creating a large button ? ask Karine... 
+with an event listener for the click on a div, it could be easier...and it works with following code...but i am not sure that it's something "usual"...ask Karine.
+or with a "class" cf. answer to my question on stackexchange
+
+TEST
 var test = document.getElementById("test");
 test.addEventListener('click', function() {
 	test.style.backgroundColor = 'black';
 });
-*/
+-------------------------------------------*/
 
 	return button = `<br>
 		<button onclick="playerTimer(${this.playerNumber})" type="button" class="progressButton" style="background-color:${this.rgb}" id="player${this.playerNumber}Button">
 			<div class="progressButton__progress">
 				<span class="progressButton__text">
-					<h3>${this.playerName} </h3>
+					<div class="big" id="playerNameDiv${this.playerNumber}">${this.playerName}</div>
 					Total time played:
 					<div id="totalPlayerTimeDiv${this.playerNumber}">
 						00:00:00
 					</div>
 					<br>
 					Time left:
-					<h2>
-						<div id="playerTimerDiv${this.playerNumber}">
-							30 
-						</div>
-					</h2>
+					<div id="playerTimerDiv${this.playerNumber}" class="big">
+						30 
+					</div>
 				</span>
 			</div>
 		</button>`;
@@ -128,13 +138,14 @@ test.addEventListener('click', function() {
 function Player(playerNumber, timeout, sec) {
   this.playerNumber = playerNumber;
   this.playerName = "Player " + (this.playerNumber+1);
-  this.rgb
+  this.rgb = "";
   this.timeout = timeout;
   this.sec = sec;
   this.stopPlayerTime = true;
   this.playerHr = 0;
   this.playerMin = 0;
   this.playerSec = 0;
+  this.playerNameFormGroup = document.createElement("div");
   this.div = document.createElement("div");
   this.newButton = newButton;
 }
@@ -177,6 +188,19 @@ function Player(playerNumber, timeout, sec) {
 
 		//add the div to the DOM
 		newPlayerNode.appendChild(players[i].div);
+
+		//Populate the settings dropdown menu
+		players[i].playerNameFormGroup.innerHTML = `
+			<div class="dropdown-divider"></div>
+			<div class="form-group" id="playerNameFormGroup${players[i].playerNumber}">
+				<label for="dropDownFormNameInput${players[i].playerNumber}">${players[i].playerName}'s Name</label>
+				<input type="text" class="form-control" maxlength="50" id="dropDownFormNameInput${players[i].playerNumber}" placeholder="${players[i].playerName}">
+				<label for="dropDownFormColorInput${players[i].playerNumber}">${players[i].playerName}'s Color</label>
+				<input type="color" class="form-control" id="dropDownFormColorInput${players[i].playerNumber}">
+			</div><br>`;
+
+		dropDownFormGroup.appendChild(players[i].playerNameFormGroup)
+
 	}
 }
 
@@ -185,20 +209,12 @@ function Player(playerNumber, timeout, sec) {
 		Customize players
 
 -----------------------------------*/
-function submitPlayerNames() {
-	var playerNameForm = getElementById("playerNameForm");
-
+function registerPlayersSettings() {
 	for (player of players) {
-		//attention, should use document.createElement("div"); instead ?
-		var playerNameFormGroup = {};
-		playerNameFormGroup.innerHTML = `
-			<div class="form-group">
-				<label for="exampleDropdownFormEmail2">Email address</label>
-				<input type="email" class="form-control" id="exampleDropdownFormEmail2" placeholder="email@example.com">
-			</div>`;
+		player.playerName = document.getElementById("dropDownFormNameInput"+player.playerNumber).value;
+		document.getElementById("playerNameDiv"+player.playerNumber).innerHTML = player.playerName;
+		dropDownForm.classList.remove('show');
 
-
-		playerNameForm.appendChild(playerNameFormGroup)
 	}
 }
 
@@ -259,8 +275,7 @@ function collapse() {
 
 //shows the dropdown menu when clicking on the "player settings" button
 function showDropDown() {
-	var dropDownForm = document.getElementById("dropDownForm");
-	
+
 	if (isdropdownCollapsed == true) {
 		isdropdownCollapsed = false;
 		dropDownForm.classList.add('show');
