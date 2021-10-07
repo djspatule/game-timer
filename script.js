@@ -76,7 +76,7 @@ setNumberOfPlayers();
 
 /*------------------------------------------
 
-		Helper function to reset timers
+		Helper functions 
 
 -------------------------------------------*/
 //reset all variables and timers.
@@ -87,6 +87,17 @@ function resetTimers() {
 		document.getElementById("playerTimerDiv"+player.playerNumber).innerHTML = turnLength;
 		document.getElementById("playerTimerDiv"+player.playerNumber).classList.remove('text-danger');
 	}
+}
+
+function collapseSettings() {
+		//collapse dropdows and toggles and reset their styles
+		dropDownForm.classList.remove('show');
+		settingsDiv.classList.remove('show');
+		isSettingsCollapsed = true;
+		settingsButton.classList.remove('btn-secondary');
+		settingsButton.classList.add('btn-outline-secondary');
+		isdropdownCollapsed = true;
+		dropDownForm.classList.remove('show');
 }
 
 /*------------------------------------------
@@ -165,6 +176,7 @@ function Player(playerNumber, timeout, sec) {
 	if (players.length != 0) {
 		//prompt the user for the number of players
 		numberOfPlayers = parseInt(window.prompt("Enter the number of players: "));
+		collapseSettings();
 	}
 	
 	//if the user is inputing a number of users inferior to the current number
@@ -200,7 +212,7 @@ function Player(playerNumber, timeout, sec) {
 			<div class="less-big">${players[i].playerName}</div>
 			<div class="form-group" id="playerNameFormGroup${players[i].playerNumber}">
 				<label for="dropDownFormNameInput${players[i].playerNumber}">Name</label>
-				<input type="text" class="form-control" maxlength="50" id="dropDownFormNameInput${players[i].playerNumber}" value="${players[i].playerName}">
+				<input type="text" class="form-control" maxlength="12" id="dropDownFormNameInput${players[i].playerNumber}" value="${players[i].playerName}">
 				<label for="dropDownFormColorInput${players[i].playerNumber}">Color</label>
 				<input type="color" value="${players[i].rgb}" class="form-control" id="dropDownFormColorInput${players[i].playerNumber}">
 			</div><br>`;
@@ -215,22 +227,14 @@ function Player(playerNumber, timeout, sec) {
 		Customize players
 
 -----------------------------------*/
+
 function registerPlayersSettings() {
 	for (player of players) {
 		player.playerName = document.getElementById("dropDownFormNameInput"+player.playerNumber).value;
 		player.rgb = document.getElementById("dropDownFormColorInput"+player.playerNumber).value;
 		document.getElementById("playerNameDiv"+player.playerNumber).innerHTML = player.playerName;
 		document.getElementById("player"+player.playerNumber+"Button").style.backgroundColor = player.rgb
-		//collapse dropdows and toggles and reset their styles
-		dropDownForm.classList.remove('show');
-		settingsDiv.classList.remove('show');
-		isSettingsCollapsed = true;
-		settingsButton.classList.remove('btn-secondary');
-		settingsButton.classList.add('btn-outline-secondary');
-		isdropdownCollapsed = true;
-		dropDownForm.classList.remove('show');
-
-
+		collapseSettings();
 	}
 }
 
@@ -304,7 +308,7 @@ function showDropDown() {
 
 /*---------------------------------
 	
-		Player timer - object programming try
+	Player timer - object programming
 
 -----------------------------------*/
 
@@ -365,6 +369,7 @@ function setTurnLength() {
 
 	//prompt the user for the required turn duration
 	turnLength = parseInt(window.prompt("Enter the turn duration in seconds: "));
+	collapseSettings();
 	
 	for (const player of players) {
 		clearTimeout(player.timeout);
@@ -497,10 +502,21 @@ function resetTotalPlayTimer (){
 /*---------------------------------
 
 		ToDo
-- créer un radio button qui passe d'un mode timer (le temps descends) à un mode stopwatch (le temps monte...ou va en dessous de 0)
-- créer un radio button qui passe d'un mode turn based (les bips sont liés au temps dans le tour) à un mode game-based (les bips sont liés au temps total de la partie qui est donc limité)
+- créer un settings button "game settings" qui ouvre un dropdown avec 
+  - un premier "checkbox" appelé "total player duration" qui 
+      - dans les settings : 
+      	- affiche un toggle bouton timer/stopwatch qui permet de changer le mode ascendant ou descendants sur le total time per player
+      	- affiche un player duration button pour regler ce critère
+      - sur le playerButton : affiche/masque le total play time par player et réduit la taille du playerButton à 100px (et vice versa)
+  - un second checkbox appelé "turn duration"  qui affiche/masque la turn duration par player et réduit la taille du playerButton à 100px (et vice versa)
+  	- dans les settings : 
+      	- affiche un toggle bouton timer/stopwatch qui permet de changer le mode ascendant ou descendants sur le turn duration
+      	- affiche le turn duration button pour regler ce critère (bouton qui existe déjà)
+      - sur le playerButton : affiche/masque le total play time par player et réduit la taille du playerButton à 100px (et vice versa)
+
 - créer une version française du site
-- Add a pause button accessible everywhere no matter how many players...? not so sure....not so strange to consider that the players who wants to pause the game does so after its turn, before clicking the next player's button...but only if turn timers don't go in the negatives
+
+- Add a "pause game" button in the settings
 
 -----------------------------------*/
 
@@ -509,8 +525,6 @@ function resetTotalPlayTimer (){
 
 		Backlog
 - Custo : 
-	- timer color
-	- name on the timer 
 	- timer duration (per player....to accomodate a child or something)
 	- bonus if timer not consumed
 
