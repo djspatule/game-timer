@@ -13,6 +13,8 @@ var audio = new Audio('beep.mp3'); // create a sound variable to "beep"
 
 var isMute = true;
 var isDark = false;
+var isSettingsCollapsed = true;
+var isdropdownCollapsed = true;
 
 var numberOfPlayers = 2; // create a variable to track the number of players (and of timers)
 
@@ -48,6 +50,12 @@ darkButton.addEventListener('click', dark);
 
 var muteButton = document.getElementById("muteButton");
 muteButton.addEventListener('click', mute);
+
+var settingsButton = document.getElementById("settingsButton");
+settingsButton.addEventListener('click', collapse);
+
+var playerSettingsButton = document.getElementById("playerSettingsButton");
+playerSettingsButton.addEventListener('click', showDropDown);
 
 
 /*------------------------------------------
@@ -99,7 +107,7 @@ test.addEventListener('click', function() {
 		<button onclick="playerTimer(${this.playerNumber})" type="button" class="progressButton" style="background-color:${this.rgb}" id="player${this.playerNumber}Button">
 			<div class="progressButton__progress">
 				<span class="progressButton__text">
-					<h3>Player ${this.playerNumber+1} </h3>
+					<h3>${this.playerName} </h3>
 					Total time played:
 					<div id="totalPlayerTimeDiv${this.playerNumber}">
 						00:00:00
@@ -119,6 +127,7 @@ test.addEventListener('click', function() {
 
 function Player(playerNumber, timeout, sec) {
   this.playerNumber = playerNumber;
+  this.playerName = "Player " + (this.playerNumber+1);
   this.rgb
   this.timeout = timeout;
   this.sec = sec;
@@ -168,10 +177,28 @@ function Player(playerNumber, timeout, sec) {
 
 		//add the div to the DOM
 		newPlayerNode.appendChild(players[i].div);
+	}
+}
 
-		// tentative progress bar 
-		//var progressBar = <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:40%">40%</div>
-		//
+/*---------------------------------
+	
+		Customize players
+
+-----------------------------------*/
+function submitPlayerNames() {
+	var playerNameForm = getElementById("playerNameForm");
+
+	for (player of players) {
+		//attention, should use document.createElement("div"); instead ?
+		var playerNameFormGroup = {};
+		playerNameFormGroup.innerHTML = `
+			<div class="form-group">
+				<label for="exampleDropdownFormEmail2">Email address</label>
+				<input type="email" class="form-control" id="exampleDropdownFormEmail2" placeholder="email@example.com">
+			</div>`;
+
+
+		playerNameForm.appendChild(playerNameFormGroup)
 	}
 }
 
@@ -185,12 +212,14 @@ function Player(playerNumber, timeout, sec) {
 function mute() {
 	if (isMute == false){
 		isMute = true;
-		muteButton.style.backgroundColor = 'grey';
+		muteButton.classList.remove('btn-outline-secondary');
+		muteButton.classList.add('btn-secondary');
 	}
 	else {
 		isMute = false;
 		audio.play();
-		muteButton.style.backgroundColor = 'white';
+		muteButton.classList.add('btn-outline-secondary');
+		muteButton.classList.remove('btn-secondary');
 	}	
 }
 
@@ -198,13 +227,47 @@ function mute() {
 function dark() {
 	if (isDark == false){
 		isDark = true;
-		darkButton.style.backgroundColor = 'grey';
+		darkButton.classList.remove('btn-outline-secondary');
+		darkButton.classList.add('btn-secondary');
 		document.body.style.backgroundColor = 'black';
 	}
 	else {
 		isDark = false;
-		darkButton.style.backgroundColor = 'white';
+		darkButton.classList.add('btn-outline-secondary');
+		darkButton.classList.remove('btn-secondary');
 		document.body.style.backgroundColor = 'white';
+	}	
+}
+
+//shows the settings div with all its buttons when clicking on the "gear" button
+function collapse() {
+	var settingsDiv = document.getElementById("settingsDiv");
+	
+	if (isSettingsCollapsed == true) {
+		isSettingsCollapsed = false;
+		settingsDiv.classList.add('show');
+		settingsButton.classList.remove('btn-outline-secondary');
+		settingsButton.classList.add('btn-secondary');
+	}
+	else {
+		isSettingsCollapsed = true;
+		settingsDiv.classList.remove('show');
+		settingsButton.classList.add('btn-outline-secondary');
+		settingsButton.classList.remove('btn-secondary');
+	}
+}
+
+//shows the dropdown menu when clicking on the "player settings" button
+function showDropDown() {
+	var dropDownForm = document.getElementById("dropDownForm");
+	
+	if (isdropdownCollapsed == true) {
+		isdropdownCollapsed = false;
+		dropDownForm.classList.add('show');
+	}
+	else {
+		isdropdownCollapsed = true;
+		dropDownForm.classList.remove('show');
 	}	
 }
 
