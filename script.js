@@ -60,8 +60,8 @@ settingsButton.addEventListener('click', collapse);
 var playerSettingsButton = document.getElementById("playerSettingsButton");
 playerSettingsButton.addEventListener('click', showDropDown);
 
-var playersNamesSubmissionButton = document.getElementById("playersNamesSubmissionButton");
-playersNamesSubmissionButton.addEventListener('click', registerPlayersSettings);
+var playersSettingsSubmissionButton = document.getElementById("playersSettingsSubmissionButton");
+playersSettingsSubmissionButton.addEventListener('click', registerPlayersSettings);
 
 
 
@@ -100,7 +100,8 @@ function newButton() {
 	r = Math.floor(Math.random() * 100 + 100)
 	g = Math.floor(Math.random() * 100 + 100)
 	b = Math.floor(Math.random() * 100 + 100)
-	this.rgb = "rgb(" + r + ","  + g + "," + b + ")";
+	//traduction en haxadecimal pour peupler directement la couleur du joueur par défaut avec la valeur aléatoire. 
+	this.rgb = "#"+parseInt(r).toString(16)+parseInt(g).toString(16)+parseInt(b).toString(16);
 	
 
 /*------------------------------------------
@@ -136,7 +137,9 @@ test.addEventListener('click', function() {
 
 
 function Player(playerNumber, timeout, sec) {
+  //0 indexed !
   this.playerNumber = playerNumber;
+  //NOT 0 indexed
   this.playerName = "Player " + (this.playerNumber+1);
   this.rgb = "";
   this.timeout = timeout;
@@ -192,11 +195,12 @@ function Player(playerNumber, timeout, sec) {
 		//Populate the settings dropdown menu
 		players[i].playerNameFormGroup.innerHTML = `
 			<div class="dropdown-divider"></div>
+			<div class="less-big">${players[i].playerName}</div>
 			<div class="form-group" id="playerNameFormGroup${players[i].playerNumber}">
-				<label for="dropDownFormNameInput${players[i].playerNumber}">${players[i].playerName}'s Name</label>
-				<input type="text" class="form-control" maxlength="50" id="dropDownFormNameInput${players[i].playerNumber}" placeholder="${players[i].playerName}">
-				<label for="dropDownFormColorInput${players[i].playerNumber}">${players[i].playerName}'s Color</label>
-				<input type="color" class="form-control" id="dropDownFormColorInput${players[i].playerNumber}">
+				<label for="dropDownFormNameInput${players[i].playerNumber}">Name</label>
+				<input type="text" class="form-control" maxlength="50" id="dropDownFormNameInput${players[i].playerNumber}" value="${players[i].playerName}">
+				<label for="dropDownFormColorInput${players[i].playerNumber}">Color</label>
+				<input type="color" value="${players[i].rgb}" class="form-control" id="dropDownFormColorInput${players[i].playerNumber}">
 			</div><br>`;
 
 		dropDownFormGroup.appendChild(players[i].playerNameFormGroup)
@@ -212,7 +216,9 @@ function Player(playerNumber, timeout, sec) {
 function registerPlayersSettings() {
 	for (player of players) {
 		player.playerName = document.getElementById("dropDownFormNameInput"+player.playerNumber).value;
+		player.rgb = document.getElementById("dropDownFormColorInput"+player.playerNumber).value;
 		document.getElementById("playerNameDiv"+player.playerNumber).innerHTML = player.playerName;
+		document.getElementById("player"+player.playerNumber+"Button").style.backgroundColor = player.rgb
 		dropDownForm.classList.remove('show');
 
 	}

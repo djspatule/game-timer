@@ -34,7 +34,7 @@
 				border-radius: 5px;
 				min-width: 125px;
 				/*added manually*/
-				min-height: 200px;
+				min-height: 190px;
 			}
 
 			.progressButton__progress {
@@ -52,9 +52,19 @@
 			}
 
 			.big {
+				display: block;
+				font-size: 1.5em;
+				margin-top: 0.2em;
+				margin-bottom: 0.2em;
+				margin-left: 0;
+				margin-right: 0;
+				font-weight: bold;
+			}
+
+			.less-big {
 			    display: block;
 			    font-size: 1.17em;
-			    margin-top: 1em;
+			    margin-top: 0em;
 			    margin-bottom: 0.5em;
 			    margin-left: 0;
 			    margin-right: 0;
@@ -90,7 +100,7 @@
 						</button>
 						<form class="dropdown-menu p-4" id="dropDownForm" name="playerSettingsForm">
 							<div id="dropDownFormGroup"></div>
-							<button type="button" class="btn btn-primary" id="playersNamesSubmissionButton">Confirm</button>
+							<button type="button" class="btn btn-primary" id="playersSettingsSubmissionButton">Confirm</button>
 						</form>
 					</div>
 					<br>
@@ -101,7 +111,12 @@
 			</div>
 			<br>
 			<div id="newPlayerNode"></div>
-			<br><button class="btn btn-secondary" id="totalPlayTimeButton"><h3>Total play time:</h3><br>(click to reset) <br><br> <h2><div id="totalPlayTimeDisplayDiv"> 00:00:00 </div></h2></button>
+			<br>
+			<button class="btn btn-secondary" id="totalPlayTimeButton">
+				<div class="less-big">Total play time:</div>
+				(click to reset)
+				<div class="less-big" id="totalPlayTimeDisplayDiv"> 00:00:00 </div>
+			</button>
 
 		</div>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-kQtW33rZJAHjgefvhyyzcGF3C5TFyBQBA13V1RKPf4uH+bwyzQxZ6CmMZHmNBEfJ" crossorigin="anonymous"></script>
