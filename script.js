@@ -173,6 +173,8 @@ function Player(playerNumber, timeout, sec) {
 		for (var i = 0; i < (playersToRemove); i++) {
 			//remove the last player's HTML div 
 			newPlayerNode.removeChild(players[players.length-1].div);
+			//remove its settings section
+			dropDownFormGroup.removeChild(players[players.length-1].playerNameFormGroup)
 			//remove the last player in the array
 			players.pop();	
 		}
@@ -219,11 +221,14 @@ function registerPlayersSettings() {
 		player.rgb = document.getElementById("dropDownFormColorInput"+player.playerNumber).value;
 		document.getElementById("playerNameDiv"+player.playerNumber).innerHTML = player.playerName;
 		document.getElementById("player"+player.playerNumber+"Button").style.backgroundColor = player.rgb
+		//collapse dropdows and toggles and reset their styles
 		dropDownForm.classList.remove('show');
 		settingsDiv.classList.remove('show');
 		isSettingsCollapsed = true;
 		settingsButton.classList.remove('btn-secondary');
 		settingsButton.classList.add('btn-outline-secondary');
+		isdropdownCollapsed = true;
+		dropDownForm.classList.remove('show');
 
 
 	}
