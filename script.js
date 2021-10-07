@@ -220,6 +220,11 @@ function registerPlayersSettings() {
 		document.getElementById("playerNameDiv"+player.playerNumber).innerHTML = player.playerName;
 		document.getElementById("player"+player.playerNumber+"Button").style.backgroundColor = player.rgb
 		dropDownForm.classList.remove('show');
+		settingsDiv.classList.remove('show');
+		isSettingsCollapsed = true;
+		settingsButton.classList.remove('btn-secondary');
+		settingsButton.classList.add('btn-outline-secondary');
+
 
 	}
 }
@@ -240,8 +245,8 @@ function mute() {
 	else {
 		isMute = false;
 		audio.play();
-		muteButton.classList.add('btn-outline-secondary');
 		muteButton.classList.remove('btn-secondary');
+		muteButton.classList.add('btn-outline-secondary');
 	}	
 }
 
@@ -255,8 +260,8 @@ function dark() {
 	}
 	else {
 		isDark = false;
-		darkButton.classList.add('btn-outline-secondary');
 		darkButton.classList.remove('btn-secondary');
+		darkButton.classList.add('btn-outline-secondary');
 		document.body.style.backgroundColor = 'white';
 	}	
 }
