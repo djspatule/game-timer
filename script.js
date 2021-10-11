@@ -50,30 +50,29 @@ var isTimeStopped = true;
 var totalPlayTimeDisplayDiv = document.getElementById('totalPlayTimeDisplayDiv');
 
 //Get all button elements from the DOM and set corresponding even listeners to be able to start certain functions later on click.
-var setNumberOfPlayersButton = document.getElementById("setNumberOfPlayersButton");
+var setNumberOfPlayersButton = document.getElementById('setNumberOfPlayersButton');
+//FYI, you don't put setNumberOfPlayers() with the () because you don't want to call the function right here right now but only when the event listener detects the event.
 setNumberOfPlayersButton.addEventListener('click', setNumberOfPlayers);
 
-var setTurnLengthButton = document.getElementById("setTurnLengthButton");
-setTurnLengthButton.addEventListener('click', setTurnLength);
+document.querySelector('#setTurnLengthButton').onclick = setTurnLength;
 
-var totalPlayTimeButton = document.getElementById("totalPlayTimeButton");
-totalPlayTimeButton.addEventListener('click', resetTotalPlayTimer);
+document.querySelector('#totalPlayTimeButton').onclick = resetTotalPlayTimer;
 
-var darkButton = document.getElementById("darkButton");
+var darkButton = document.getElementById('darkButton');
 darkButton.addEventListener('click', dark);
 
-var muteButton = document.getElementById("muteButton");
+var muteButton = document.getElementById('muteButton');
 muteButton.addEventListener('click', mute);
 
-var settingsButton = document.getElementById("settingsButton");
+var settingsButton = document.getElementById('settingsButton');
 settingsButton.addEventListener('click', collapse);
 
-var playerSettingsButton = document.getElementById("playerSettingsButton");
-playerSettingsButton.addEventListener('click', showDropDown);
+document.querySelector('#playerSettingsButton').onclick = showDropDown;	
 
-var playersSettingsSubmissionButton = document.getElementById("playersSettingsSubmissionButton");
-playersSettingsSubmissionButton.addEventListener('click', registerPlayersSettings);
-
+//var playersSettingsSubmissionButton = document.querySelector('#playersSettingsSubmissionButton');
+//playersSettingsSubmissionButton.addEventListener('click', registerPlayersSettings);
+//trying another syntax...SUCCESSFUL because this button is not needed anywhere else in the program!
+document.querySelector('#playersSettingsSubmissionButton').onclick = registerPlayersSettings;	
 
 /*------------------------------------------
 
@@ -81,8 +80,8 @@ playersSettingsSubmissionButton.addEventListener('click', registerPlayersSetting
 
 -------------------------------------------*/
 
-setNumberOfPlayers();
-
+//TODO : see if waiting for the DOM to be loaded fully helps with the reimplementation of the player object
+document.addEventListener('DOMContentLoaded', setNumberOfPlayers);
 
 /*------------------------------------------
 
@@ -96,8 +95,8 @@ function resetTimers()
   {
 	clearTimeout(player.timeout);
 	player.sec = parseInt(turnLength);
-	document.getElementById("playerTimerDiv"+player.playerNumber).innerHTML = turnLength;
-	document.getElementById("playerTimerDiv"+player.playerNumber).classList.remove('text-danger');
+	document.getElementById('playerTimerDiv'+player.playerNumber).innerHTML = turnLength;
+	document.getElementById('playerTimerDiv'+player.playerNumber).classList.remove('text-danger');
 	}
 }
 
@@ -121,27 +120,28 @@ function collapseSettings()
 
 function newButton() 
 {
-	//randomly generate a color for the player button without it being too light (cause have a white font color in secondary buttons)
+	//randomly generate a color with rgb values >100 for the player button without it being too light (to nicely see the white font color in secondary buttons)
 	r = Math.floor(Math.random() * 100 + 100)
 	g = Math.floor(Math.random() * 100 + 100)
 	b = Math.floor(Math.random() * 100 + 100)
 	
 	//traduction en hexadecimal pour peupler directement la couleur du joueur par défaut avec la valeur aléatoire. 
-	this.rgb = "#"+parseInt(r).toString(16)+parseInt(g).toString(16)+parseInt(b).toString(16);
+	this.rgb = '#'+parseInt(r).toString(16)+parseInt(g).toString(16)+parseInt(b).toString(16);
 
 /*------------------------------------------
 TODO : find a way to avoid this dirty way of creating a large button ? ask Karine... 
-with an event listener for the click on a div, it could be easier...and it works with following code...but i am not sure that it's something "usual"...ask Karine.
-or with a "class" cf. answer to my question on stackexchange
+with an event listener for the click on a div, it could be easier...and it works with following code...but i am not sure that it's something 'usual'...ask Karine.
+or with a 'class' cf. answer to my question on stackexchange
 
 TEST
-var test = document.getElementById("test");
+var test = document.getElementById('test');
 test.addEventListener('click', function() {
 	test.style.backgroundColor = 'black';
 });
 -------------------------------------------*/
 
 	//define and returns the button's HTML with the RGB color as well as many elements from the player (number, name, etc.) in order for things to be easiliy identifiable per player in the DOM
+	//TODO : find a way to put this button in a this.button player property without having to use 'return' ? 
 	return button = `<br>
 		<button onclick="playerTimer(${this.playerNumber})" type="button" class="progressButton" style="background-color:${this.rgb}" id="player${this.playerNumber}Button">
 			<div class="progressButton__progress">
@@ -161,22 +161,23 @@ test.addEventListener('click', function() {
 		</button>`;
 }
 
-//defines a player object (constructor function). ToDo : use classes ? 
+//defines a player object (constructor function). 
+//ToDo : use classes ? 
 function Player(playerNumber, sec) 
 {
   //0 indexed !
   this.playerNumber = playerNumber;
   //NOT 0 indexed
-  this.playerName = "Player " + (this.playerNumber+1);
-  this.rgb = "";
+  this.playerName = 'Player ' + (this.playerNumber+1);
+  this.rgb = '';
   this.timeout = 0;
   this.sec = sec;
   this.isPlayerTimeStopped = true;
   this.playerHr = 0;
   this.playerMin = 0;
   this.playerSec = 0;
-  this.playerNameFormGroup = document.createElement("div");
-  this.div = document.createElement("div");
+  this.playerNameFormGroup = document.createElement('div');
+  this.div = document.createElement('div');
   this.newButton = newButton;
 }
 
@@ -192,7 +193,7 @@ function setNumberOfPlayers()
 	if (players.length != 0) 
 	{
 		//prompt the user for the number of players
-		numberOfPlayers = parseInt(window.prompt("Enter the number of players: "));
+		numberOfPlayers = parseInt(window.prompt('Enter the number of players: '));
 		//collapse the settings for faster UX
 		collapseSettings();
 	}
@@ -228,7 +229,7 @@ function setNumberOfPlayers()
 		newPlayerNode.appendChild(players[i].div);
 		
 		//populate their totalPlayerTimeDiv (which can thus easiliy be accessed later...in particular by the reset function)
-		players[i].totalPlayerTimeDiv = document.getElementById("totalPlayerTimeDiv" + i);
+		players[i].totalPlayerTimeDiv = document.getElementById('totalPlayerTimeDiv' + i);
 
 		//create the settings dropdown group for that specific player
 		players[i].playerNameFormGroup.innerHTML = `
@@ -236,7 +237,7 @@ function setNumberOfPlayers()
 			<div class="less-big">${players[i].playerName}</div>
 			<div class="form-group" id="playerNameFormGroup${players[i].playerNumber}">
 				<label for="dropDownFormNameInput${players[i].playerNumber}">Name</label>
-				<input type="text" class="form-control" maxlength="12" id="dropDownFormNameInput${players[i].playerNumber}" value="${players[i].playerName}">
+				<input type="text" class="form-control" maxlength="12" autofocus id="dropDownFormNameInput${players[i].playerNumber}" value="${players[i].playerName}">
 				<label for="dropDownFormColorInput${players[i].playerNumber}">Color</label>
 				<input type="color" value="${players[i].rgb}" class="form-control" id="dropDownFormColorInput${players[i].playerNumber}">
 			</div><br>`;
@@ -258,10 +259,10 @@ function registerPlayersSettings()
 	for (player of players) 
 	{
 		//put the elements chosen by the user for each player in the respective player property before updating the DOM (and the player button in particular) withthe value of such properties
-		player.playerName = document.getElementById("dropDownFormNameInput"+player.playerNumber).value;
-		player.rgb = document.getElementById("dropDownFormColorInput"+player.playerNumber).value;
-		document.getElementById("playerNameDiv"+player.playerNumber).innerHTML = player.playerName;
-		document.getElementById("player"+player.playerNumber+"Button").style.backgroundColor = player.rgb;
+		player.playerName = document.getElementById('dropDownFormNameInput'+player.playerNumber).value;
+		player.rgb = document.getElementById('dropDownFormColorInput'+player.playerNumber).value;
+		document.getElementById('playerNameDiv'+player.playerNumber).innerHTML = player.playerName;
+		document.getElementById('player'+player.playerNumber+'Button').style.backgroundColor = player.rgb;
 		//collapse the dropdown for faster UX.
 		collapseSettings();
 	}
@@ -275,7 +276,7 @@ function registerPlayersSettings()
 //helper function that toggle a button's between secondary (dark) and outline-secondary (light) 
 function toggle(button) 
 {
-	if (button.classList == "btn-secondary") 
+	if (button.classList == 'btn-secondary') 
 	{
 		button.classList.remove('btn-outline-secondary');
 		button.classList.add('btn-secondary');
@@ -324,7 +325,7 @@ function dark()
 //shows the settings div with all its buttons when clicking on the "gear" button
 function collapse() 
 {
-	var settingsDiv = document.getElementById("settingsDiv");
+	var settingsDiv = document.getElementById('settingsDiv');
 	
 	if (isSettingsCollapsed == true) 
 	{
@@ -386,12 +387,12 @@ function playerTurnDuration(id)
 	//increment player's total time
 	playerDuration(id);
 
-	var playerTimerDiv = document.getElementById("playerTimerDiv"+id);
+	var playerTimerDiv = document.getElementById('playerTimerDiv'+id);
 
 	//update progress bar
-	var playerButton = document.getElementById("player"+id+"Button");
+	var playerButton = document.getElementById('player'+id+'Button');
 	var progress = (1-(players[id].sec/parseInt(turnLength)))*100
-	playerButton.querySelector(".progressButton__progress").style.height = `${progress}%`;
+	playerButton.querySelector('.progressButton__progress').style.height = `${progress}%`;
 	
 	//alert the user at 10 seconds to the end and in the last 3 seconds
 	if (isMute == false && (players[id].sec == 10 || players[id].sec<= 3)) 
@@ -424,13 +425,13 @@ function setTurnLength()
 {
 
 	//prompt the user for the required turn duration
-	turnLength = parseInt(window.prompt("Enter the turn duration in seconds: "));
+	turnLength = parseInt(window.prompt('Enter the turn duration in seconds: '));
 	collapseSettings();
 	
 	for (const player of players) 
 	{
 		clearTimeout(player.timeout);
-		document.getElementById("playerTimerDiv"+player.playerNumber).innerHTML = turnLength;
+		document.getElementById('playerTimerDiv'+player.playerNumber).innerHTML = turnLength;
 	}
 }
 
@@ -533,7 +534,7 @@ function timerCycle()
 
 	    totalPlayTimeDisplayDiv.innerHTML = gameHr + ':' + gameMin + ':' + gameSec;
 
-	    setTimeout("timerCycle()", 1000);
+	    setTimeout('timerCycle()', 1000);
 	}
 }
 
@@ -556,7 +557,7 @@ function resetTotalPlayTimer ()
 	    {
 	    	//player.isPlayerTimeStopped = true;
 	    }*/
-	    totalPlayTimeDisplayDiv.innerHTML = "00:00:00";
+	    totalPlayTimeDisplayDiv.innerHTML = '00:00:00';
 	    gameHr = 0;
 	    gameMin = 0;
 	    gameSec = 0;
@@ -567,7 +568,7 @@ function resetTotalPlayTimer ()
 	    	player.playerSec = 0;
 	    	player.playerMin = 0;
 	    	player.playerHr = 0;
-	    	player.totalPlayerTimeDiv.innerHTML = "00:00:00";
+	    	player.totalPlayerTimeDiv.innerHTML = '00:00:00';
 	    }
 
 	    //reset all variables and timers.
