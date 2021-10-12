@@ -47,6 +47,7 @@ var gameMin = 0;
 var isTimeStopped = true;
 var gameStart = Date.now();
 var turnStart = Date.now();
+var isNewTurn = true;
 
 //create a variable to store the totalPlayTimeDisplayDiv from the DOM so that it can be accessed and modified easily after
 var totalPlayTimeDisplayDiv = document.getElementById('totalPlayTimeDisplayDiv');
@@ -100,6 +101,7 @@ function resetTimers()
 	document.getElementById('playerTimerDiv'+player.playerNumber).classList.remove('text-danger');
 	var playerButton = document.getElementById('player'+player.playerNumber+'Button');
 	playerButton.querySelector('.progressButton__progress').style.height = "0%";
+	isNewTurn = true;
 	}
 }
 
@@ -187,6 +189,7 @@ function Player(playerNumber, sec)
   this.playerHr = 0;
   this.playerMin = 0;
   this.playerSec = 0;
+  this.totalPlayerSec = 0;
   this.playerNameFormGroup = document.createElement('div');
   this.div = document.createElement('div');
   this.newButton = newButton;
@@ -417,11 +420,11 @@ function playerTurnDuration(id)
 	playerTimerDiv.innerHTML = players[id].sec;
 	
 	//start the actual counting function....by calling itself every second (recursive function)
-	players[id].timeout = setTimeout(playerTurnDuration, 1000, id);
+	players[id].timeout = setTimeout(playerTurnDuration, 300, id);
 
-	//comment that function to get turns in the negative...
+	//TODO : comment that function to get turns in the negative...
 	//halt the counting function if time is out. this is the halting condition required in any recursive function
-	if (players[id].sec == 0) 
+	if (players[id].sec <= 0) 
 	{
 		clearTimeout(players[id].timeout);
 		players[id].sec = turnLength;
@@ -456,37 +459,17 @@ function setTurnLength()
 //recursive function in order to keep the timer going. Stoped by changing the value of stopPlayerTime
 function playerDuration(id) 
 {
-    players[id].playerSec = parseInt(players[id].playerSec);
-    players[id].playerMin = parseInt(players[id].playerMin);
-    players[id].playerHr = parseInt(players[id].playerHr);
-
-    players[id].playerSec += 1;
-
-    if (players[id].playerSec == 60) 
+    if (isNewTurn == true) 
     {
-      players[id].playerMin = players[id].playerMin + 1;
-      players[id].playerSec = 0;
-    }
-    if (players[id].gameMin == 60) 
-    {
-      players[id].playerHr = players[id].playerHr + 1;
-      players[id].playerMin = 0;
-      players[id].playerSec = 0;
+    	isNewTurn = false;
+    	players[id].totalPlayerSec += parseInt(players[id].playerSec)
     }
 
-    // de manière à ajouter un 0 manuellement devant le chiffre des heures/minutes/secondes lorsqu'elles sont inférieurs à 10.
-    if (players[id].playerSec < 10 || players[id].playerSec == 0) 
-    {
-      players[id].playerSec = '0' + players[id].playerSec;
-    }
-    if (players[id].playerMin < 10 || players[id].playerMin == 0) 
-    {
-      players[id].playerMin = '0' + players[id].playerMin;
-    }
-    if (players[id].playerHr < 10 || players[id].playerHr == 0) 
-    {
-      players[id].playerHr = '0' + players[id].playerHr;
-    }
+    var delta = ((Date.now() - turnStart)/1000) + players[id].totalPlayerSec;
+
+    players[id].playerSec = addZero(Math.floor(delta % 60));
+    players[id].playerMin = addZero(Math.floor((delta/60)%3600));
+    players[id].playerHr = addZero(Math.floor(delta/3600));
 
     players[id].totalPlayerTimeDiv.innerHTML = players[id].playerHr + ':' + players[id].playerMin + ':' + players[id].playerSec;
 }
