@@ -190,6 +190,7 @@ function Player(playerNumber, sec)
   this.playerMin = 0;
   this.playerSec = 0;
   this.totalPlayerSec = 0;
+  this.delta = 0;
   this.playerNameFormGroup = document.createElement('div');
   this.div = document.createElement('div');
   this.newButton = newButton;
@@ -462,14 +463,14 @@ function playerDuration(id)
     if (isNewTurn == true) 
     {
     	isNewTurn = false;
-    	players[id].totalPlayerSec += parseInt(players[id].playerSec)
+    	players[id].totalPlayerSec = parseInt(players[id].delta)
     }
 
-    var delta = ((Date.now() - turnStart)/1000) + players[id].totalPlayerSec;
+    players[id].delta = ((Date.now() - turnStart)/1000) + players[id].totalPlayerSec;
 
-    players[id].playerSec = addZero(Math.floor(delta % 60));
-    players[id].playerMin = addZero(Math.floor((delta/60)%3600));
-    players[id].playerHr = addZero(Math.floor(delta/3600));
+    players[id].playerSec = addZero(Math.floor(players[id].delta % 60));
+    players[id].playerMin = addZero(Math.floor((players[id].delta/60)%3600));
+    players[id].playerHr = addZero(Math.floor(players[id].delta/3600));
 
     players[id].totalPlayerTimeDiv.innerHTML = players[id].playerHr + ':' + players[id].playerMin + ':' + players[id].playerSec;
 }
@@ -528,16 +529,18 @@ function resetTotalPlayTimer ()
 	    	//player.isPlayerTimeStopped = true;
 	    }*/
 	    totalPlayTimeDisplayDiv.innerHTML = '00:00:00';
-	    gameHr = 0;
+/*	    gameHr = 0;
 	    gameMin = 0;
-	    gameSec = 0;
+	    gameSec = 0;*/
 	    
 	    //also resets players timers
 	    for (player of players) 
 	    {
-	    	player.playerSec = 0;
+	    	/*player.playerSec = 0;
 	    	player.playerMin = 0;
-	    	player.playerHr = 0;
+	    	player.playerHr = 0;*/
+	    	player.totalPlayerSec = 0;
+	    	player.delta  = 0;
 	    	player.totalPlayerTimeDiv.innerHTML = '00:00:00';
 	    }
 
