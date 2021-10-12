@@ -25,11 +25,11 @@ var isDark = false;
 var isSettingsCollapsed = true;
 var isdropdownCollapsed = true;
 
-//Create a DOM element where players will be added
+//Create a variable containing the DOM element where players will be added
 var newPlayerNode = document.getElementById('newPlayerNode');
-//create a dropdown div where all player's customization dropdown settings form will be implemented
+//create a variable containing the dropdown div where all player's customization dropdown settings form will be implemented
 var dropDownForm = document.getElementById('dropDownForm');
-//create a dropdown div where each player's customization dropdownGroup in the overall settings dropdown form will be implemented
+//create a variable containing the dropdown group div where each player's customization dropdownGroup in the overall settings dropdown form will be implemented
 var dropDownFormGroup = document.getElementById('dropDownFormGroup');
 
 //create the players array in which all players objects will be stored
@@ -45,20 +45,16 @@ var gameHr = 0;
 var gameSec = 0;
 var gameMin = 0;
 var isTimeStopped = true;
+var gameStart = Date.now();
+var turnStart = Date.now();
 
 //create a variable to store the totalPlayTimeDisplayDiv from the DOM so that it can be accessed and modified easily after
 var totalPlayTimeDisplayDiv = document.getElementById('totalPlayTimeDisplayDiv');
 
 //Get all button elements from the DOM and set corresponding even listeners to be able to start certain functions later on click.
-var setNumberOfPlayersButton = document.getElementById('setNumberOfPlayersButton');
-//FYI, you don't put setNumberOfPlayers() with the () because you don't want to call the function right here right now but only when the event listener detects the event.
-setNumberOfPlayersButton.addEventListener('click', setNumberOfPlayers);
-
-document.querySelector('#setTurnLengthButton').onclick = setTurnLength;
-
-document.querySelector('#totalPlayTimeButton').onclick = resetTotalPlayTimer;
 
 var darkButton = document.getElementById('darkButton');
+//FYI, you don't put dark() with the () because you don't want to call the function right here right now but only when the event listener detects the event.
 darkButton.addEventListener('click', dark);
 
 var muteButton = document.getElementById('muteButton');
@@ -67,11 +63,14 @@ muteButton.addEventListener('click', mute);
 var settingsButton = document.getElementById('settingsButton');
 settingsButton.addEventListener('click', collapse);
 
+document.querySelector('#setNumberOfPlayersButton').onclick = setNumberOfPlayers;
+
+document.querySelector('#setTurnLengthButton').onclick = setTurnLength;
+
+document.querySelector('#totalPlayTimeButton').onclick = resetTotalPlayTimer;
+
 document.querySelector('#playerSettingsButton').onclick = showDropDown;	
 
-//var playersSettingsSubmissionButton = document.querySelector('#playersSettingsSubmissionButton');
-//playersSettingsSubmissionButton.addEventListener('click', registerPlayersSettings);
-//trying another syntax...SUCCESSFUL because this button is not needed anywhere else in the program!
 document.querySelector('#playersSettingsSubmissionButton').onclick = registerPlayersSettings;	
 
 /*------------------------------------------
@@ -94,9 +93,13 @@ function resetTimers()
   for (const player of players) 
   {
 	clearTimeout(player.timeout);
-	player.sec = parseInt(turnLength);
+	player.sec = turnLength;
+	//register the turn's start time
+	turnStart = Date.now();
 	document.getElementById('playerTimerDiv'+player.playerNumber).innerHTML = turnLength;
 	document.getElementById('playerTimerDiv'+player.playerNumber).classList.remove('text-danger');
+	var playerButton = document.getElementById('player'+player.playerNumber+'Button');
+	playerButton.querySelector('.progressButton__progress').style.height = "0%";
 	}
 }
 
@@ -112,6 +115,13 @@ function collapseSettings()
 	dropDownForm.classList.remove('show');
 }
 
+// de manière à ajouter un 0 manuellement devant le chiffre des heures/minutes/secondes lorsqu'elles sont inférieurs à 10.
+function addZero(i) 
+{
+		if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
+	return i;
+}
+
 /*------------------------------------------
 
 		Player definition	
@@ -125,7 +135,8 @@ function newButton()
 	g = Math.floor(Math.random() * 100 + 100)
 	b = Math.floor(Math.random() * 100 + 100)
 	
-	//traduction en hexadecimal pour peupler directement la couleur du joueur par défaut avec la valeur aléatoire. 
+	//traduction en hexadecimal pour peupler directement la couleur du joueur par défaut avec la valeur aléatoire.
+	//TODO : comment se fait-il que je parvienne à sortir la valeur de rgb de la fonction sans utiliser "return" mais que je n'y arrive pas pour le contenu HTML (string) du bouton ?
 	this.rgb = '#'+parseInt(r).toString(16)+parseInt(g).toString(16)+parseInt(b).toString(16);
 
 /*------------------------------------------
@@ -217,7 +228,7 @@ function setNumberOfPlayers()
 	for (var i = players.length; i < numberOfPlayers; i++) 
 	{
 		//instantiate player objects. ToDo : using "new()" is supposedly not good...replace ? use classes and the constructor function ? 
-		players[i] = new Player(i,parseInt(turnLength));
+		players[i] = new Player(i,turnLength);
 
 		//Id their div with their player numer (0 indexed!!!)
 		players[i].div.id = players[i].playerNumber;
@@ -270,7 +281,7 @@ function registerPlayersSettings()
 
 /*---------------------------------
 	
-		Miscellanous settings - dark mode, mute, etc.
+		UI settings - dark mode, mute, etc.
 
 -----------------------------------*/
 //helper function that toggle a button's between secondary (dark) and outline-secondary (light) 
@@ -287,7 +298,6 @@ function toggle(button)
 		button.classList.add('btn-outline-secondary');
 	}
 }
-
 
 //implement the mute button as a toggle
 function mute() 
@@ -375,24 +385,26 @@ function playerTimer(id)
 
 	resetTimers();
 
-	//players[id].sec = parseInt(turnLength);
 	playerTurnDuration(id);
 }
 
 function playerTurnDuration(id) 
 {
 	
+	var delta = (Date.now() - turnStart)/1000;	
 	//decrement player's turn time
-	players[id].sec -= 1;
+  players[id].sec = turnLength - Math.floor(delta);
+
 	//increment player's total time
 	playerDuration(id);
 
-	var playerTimerDiv = document.getElementById('playerTimerDiv'+id);
-
 	//update progress bar
 	var playerButton = document.getElementById('player'+id+'Button');
-	var progress = (1-(players[id].sec/parseInt(turnLength)))*100
+	var progress = (1-(players[id].sec/turnLength))*100
 	playerButton.querySelector('.progressButton__progress').style.height = `${progress}%`;
+	
+	//fetch the playerTimerDiv to change its class 
+	var playerTimerDiv = document.getElementById('playerTimerDiv'+id);
 	
 	//alert the user at 10 seconds to the end and in the last 3 seconds
 	if (isMute == false && (players[id].sec == 10 || players[id].sec<= 3)) 
@@ -401,7 +413,7 @@ function playerTurnDuration(id)
 		playerTimerDiv.classList.add('text-danger');
 	}
 
-	//could be deleted if not used...
+	//updates the countdown's value
 	playerTimerDiv.innerHTML = players[id].sec;
 	
 	//start the actual counting function....by calling itself every second (recursive function)
@@ -412,7 +424,7 @@ function playerTurnDuration(id)
 	if (players[id].sec == 0) 
 	{
 		clearTimeout(players[id].timeout);
-		players[id].sec = parseInt(turnLength);
+		players[id].sec = turnLength;
 	}
 }
 
@@ -491,6 +503,7 @@ function gameDuration()
     if (isTimeStopped == true) 
     {
         isTimeStopped = false;
+        gameStart = Date.now();
         timerCycle();
     }
 }
@@ -500,41 +513,15 @@ function timerCycle()
 {
 	if (isTimeStopped == false) 
 	{
-	    gameSec = parseInt(gameSec);
-	    gameMin = parseInt(gameMin);
-	    gameHr = parseInt(gameHr);
+		var delta = (Date.now() - gameStart)/1000;	
 
-	    gameSec += 1;
+    gameSec = addZero(Math.floor(delta % 60));
+    gameMin = addZero(Math.floor((delta/60)%3600));
+    gameHr = addZero(Math.floor(delta/3600));
 
-	    if (gameSec == 60) 
-	    {
-	      gameMin = gameMin + 1;
-	      gameSec = 0;
-	    }
-	    if (gameMin == 60) 
-	    {
-	      gameHr = gameHr + 1;
-	      gameMin = 0;
-	      gameSec = 0;
-	    }
+    totalPlayTimeDisplayDiv.innerHTML = gameHr + ':' + gameMin + ':' + gameSec;
 
-	    // de manière à ajouter un 0 manuellement devant le chiffre des heures/minutes/secondes lorsqu'elles sont inférieurs à 10.
-	    if (gameSec < 10 || gameSec == 0) 
-	    {
-	      gameSec = '0' + gameSec;
-	    }
-	    if (gameMin < 10 || gameMin == 0) 
-	    {
-	      gameMin = '0' + gameMin;
-	    }
-	    if (gameHr < 10 || gameHr == 0) 
-	    {
-	      gameHr = '0' + gameHr;
-	    }
-
-	    totalPlayTimeDisplayDiv.innerHTML = gameHr + ':' + gameMin + ':' + gameSec;
-
-	    setTimeout('timerCycle()', 1000);
+    setTimeout('timerCycle()', 300);
 	}
 }
 
