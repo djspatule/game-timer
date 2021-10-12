@@ -48,6 +48,7 @@ var isTimeStopped = true;
 var gameStart = Date.now();
 var turnStart = Date.now();
 var isNewTurn = true;
+var isGamePaused = false;
 
 //create a variable to store the totalPlayTimeDisplayDiv from the DOM so that it can be accessed and modified easily after
 var totalPlayTimeDisplayDiv = document.getElementById('totalPlayTimeDisplayDiv');
@@ -63,6 +64,9 @@ muteButton.addEventListener('click', mute);
 
 var settingsButton = document.getElementById('settingsButton');
 settingsButton.addEventListener('click', collapse);
+
+var pauseButton = document.getElementById('pauseButton');
+pauseButton.addEventListener('click', pause);
 
 document.querySelector('#setNumberOfPlayersButton').onclick = setNumberOfPlayers;
 
@@ -290,15 +294,15 @@ function registerPlayersSettings()
 //helper function that toggle a button's between secondary (dark) and outline-secondary (light) 
 function toggle(button) 
 {
-	if (button.classList == 'btn-secondary') 
-	{
-		button.classList.remove('btn-outline-secondary');
-		button.classList.add('btn-secondary');
-	}
-	else 
+	if (button.classList.contains('btn-secondary'))
 	{
 		button.classList.remove('btn-secondary');
 		button.classList.add('btn-outline-secondary');
+	}
+	else 
+	{
+		button.classList.remove('btn-outline-secondary');
+		button.classList.add('btn-secondary');
 	}
 }
 
@@ -332,6 +336,21 @@ function dark()
 		isDark = false;
 		toggle(darkButton);
 		document.body.style.backgroundColor = 'white';
+	}	
+}
+
+//implement the pause button as a toggle
+function pause() 
+{
+	if (isGamePaused == false)
+	{
+		isGamePaused = true;
+		toggle(pauseButton);
+	}
+	else 
+	{
+		isGamePaused = false;
+		toggle(pauseButton);
 	}	
 }
 
@@ -496,7 +515,7 @@ function gameDuration()
 //recursive function in order to keep the timer going. Stoped by changing the value of isTimeStopped
 function timerCycle() 
 {
-	if (isTimeStopped == false) 
+	if (isTimeStopped == false && isGamePaused == false) 
 	{
 		var delta = (Date.now() - gameStart)/1000;	
 		//TODO : define these variables or directly write into totalPlayTimeDisplayDiv based on delta ? (addZero(Math.floor(delta % 60));, etc.) 
@@ -507,6 +526,11 @@ function timerCycle()
     totalPlayTimeDisplayDiv.innerHTML = gameHr + ':' + gameMin + ':' + gameSec;
 
     setTimeout('timerCycle()', 300);
+	}
+	//TODO : implement the pause button
+	else if (isGamePaused == true) 
+	{
+			//TODO
 	}
 }
 
@@ -529,9 +553,6 @@ function resetTotalPlayTimer ()
     //also resets players timers
     for (player of players) 
     {
-    	/*player.playerSec = 0;
-    	player.playerMin = 0;
-    	player.playerHr = 0;*/
     	player.totalPlayerSec = 0;
     	player.delta  = 0;
     	player.totalPlayerTimeDiv.innerHTML = '00:00:00';
