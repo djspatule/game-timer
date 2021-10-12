@@ -185,7 +185,6 @@ function Player(playerNumber, sec)
   this.rgb = '';
   this.timeout = 0;
   this.sec = sec;
-  this.isPlayerTimeStopped = true;
   this.playerHr = 0;
   this.playerMin = 0;
   this.playerSec = 0;
@@ -402,6 +401,7 @@ function playerTurnDuration(id)
 	//increment player's total time
 	playerDuration(id);
 
+
 	//update progress bar
 	var playerButton = document.getElementById('player'+id+'Button');
 	var progress = (1-(players[id].sec/turnLength))*100
@@ -458,6 +458,7 @@ function setTurnLength()
 -----------------------------------*/
 
 //recursive function in order to keep the timer going. Stoped by changing the value of stopPlayerTime
+//Simplify by using players[id].sec (increamented in the previous function and passed to this one) some way instead of having to define a player.delta, player.playerSec, etc. 
 function playerDuration(id) 
 {
     if (isNewTurn == true) 
@@ -498,7 +499,7 @@ function timerCycle()
 	if (isTimeStopped == false) 
 	{
 		var delta = (Date.now() - gameStart)/1000;	
-
+		//TODO : define these variables or directly write into totalPlayTimeDisplayDiv based on delta ? (addZero(Math.floor(delta % 60));, etc.) 
     gameSec = addZero(Math.floor(delta % 60));
     gameMin = addZero(Math.floor((delta/60)%3600));
     gameHr = addZero(Math.floor(delta/3600));
@@ -520,33 +521,25 @@ function resetTotalPlayTimer ()
 {
 	if (isTimeStopped == false) 
 	{
-	    isTimeStopped = true;
-	    isGameStarted = false;
-	    
-	    //TODO : can't remember why I had this setup. I f no bug discovered by October 31st, delete !
-	    /*for (player of players) 
-	    {
-	    	//player.isPlayerTimeStopped = true;
-	    }*/
-	    totalPlayTimeDisplayDiv.innerHTML = '00:00:00';
-/*	    gameHr = 0;
-	    gameMin = 0;
-	    gameSec = 0;*/
-	    
-	    //also resets players timers
-	    for (player of players) 
-	    {
-	    	/*player.playerSec = 0;
-	    	player.playerMin = 0;
-	    	player.playerHr = 0;*/
-	    	player.totalPlayerSec = 0;
-	    	player.delta  = 0;
-	    	player.totalPlayerTimeDiv.innerHTML = '00:00:00';
-	    }
+    isTimeStopped = true;
+    isGameStarted = false;
+    
+    totalPlayTimeDisplayDiv.innerHTML = '00:00:00';
 
-	    //reset all variables and timers.
-	    resetTimers();
-  	}
+    //also resets players timers
+    for (player of players) 
+    {
+    	/*player.playerSec = 0;
+    	player.playerMin = 0;
+    	player.playerHr = 0;*/
+    	player.totalPlayerSec = 0;
+    	player.delta  = 0;
+    	player.totalPlayerTimeDiv.innerHTML = '00:00:00';
+    }
+
+    //reset all variables and timers.
+    resetTimers();
+	}
 }
 
 /*---------------------------------
