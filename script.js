@@ -128,37 +128,68 @@ function addZero(i)
 	return i;
 }
 
-/*------------------------------------------
-
-		Player definition	
-		
--------------------------------------------*/
-
-function newButton() 
+//randomly generate a color with rgb values >100 for the player button without it being too light (to nicely see the white font color in secondary buttons)
+function randomRGB()
 {
-	//randomly generate a color with rgb values >100 for the player button without it being too light (to nicely see the white font color in secondary buttons)
 	r = Math.floor(Math.random() * 100 + 100)
 	g = Math.floor(Math.random() * 100 + 100)
 	b = Math.floor(Math.random() * 100 + 100)
 	
 	//traduction en hexadecimal pour peupler directement la couleur du joueur par défaut avec la valeur aléatoire.
-	//TODO : comment se fait-il que je parvienne à sortir la valeur de rgb de la fonction sans utiliser "return" mais que je n'y arrive pas pour le contenu HTML (string) du bouton ?
-	this.rgb = '#'+parseInt(r).toString(16)+parseInt(g).toString(16)+parseInt(b).toString(16);
-
+	return rgb = '#'+parseInt(r).toString(16)+parseInt(g).toString(16)+parseInt(b).toString(16);
+}
 /*------------------------------------------
-TODO : find a way to avoid this dirty way of creating a large button ? ask Karine... 
-with an event listener for the click on a div, it could be easier...and it works with following code...but i am not sure that it's something 'usual'...ask Karine.
-or with a 'class' cf. answer to my question on stackexchange
 
-TEST
-var test = document.getElementById('test');
-test.addEventListener('click', function() {
-	test.style.backgroundColor = 'black';
-});
+		Player definition	
+		
 -------------------------------------------*/
+class Player 
+{
+	constructor(_playerNumber, _sec) 
+	{
+		this.playerNumber = _playerNumber;
+	  //NOT 0 indexed
+	  this.playerName = 'Player ' + (this.playerNumber+1);
+	  this.rgb = randomRGB();
+	  this.timeout = 0;
+	  this.sec = _sec;
+	  this.playerHr = 0;
+	  this.playerMin = 0;
+	  this.playerSec = 0;
+	  this.totalPlayerSec = 0;
+	  this.delta = 0;
+	  this.playerNameFormGroup = document.createElement('div');
+	  this.div = document.createElement('div');
+	}
+	//TODO : use a getter or a normal class method ? (by just deleting word getter and adding paranthesis where the function is called newButton()) ?
+	//Getters and setters are used to define methods on a class which are then used as if they are properties.
+	get newButton()
+	{
+
+	/*------------------------------------------
+	TODO : 
+	- Find a way to avoid this way of creating a large button ? is is unusual or "dirty" to create large HTML sections as such in js  ?  
+	- Avoid the onclick event ? with a for loop iterating over players to create corresponding event listeners for the click on their "player${this.playerNumber}Button", for this, pass the even as an argument to the function called by the even listener.it could be easier...
+	- simplify the call to new button ? Integrate it as a property instead of as a method ? 
+
+
+	TEST
+	#1st section : add just under the first call to the setNumberOfPlayers function on line 88. 
+		var playerButtons = []; // add at the very begining of the program
+		for (var i = 0; i<players.length; i++) 
+		{
+			playerButtons[i] = document.getElementById('player'+i+'Button');
+			pauseButton.addEventListener('click', playerTimer;
+		}
+	#2nd section:  Add the event to the playerTimer() function definition as argument : playerTimer(event)
+	var id = event.target.id 
+
+
+	-------------------------------------------*/
 
 	//define and returns the button's HTML with the RGB color as well as many elements from the player (number, name, etc.) in order for things to be easiliy identifiable per player in the DOM
-	//TODO : find a way to put this button in a this.button player property without having to use 'return' ? 
+	//TODO : find a way to put this button in a this.button player property without having to use 'return' ?
+	var button = {};
 	return button = `<br>
 		<button onclick="playerTimer(${this.playerNumber})" type="button" class="progressButton" style="background-color:${this.rgb}" id="player${this.playerNumber}Button">
 			<div class="progressButton__progress">
@@ -176,28 +207,9 @@ test.addEventListener('click', function() {
 				</span>
 			</div>
 		</button>`;
+	}
 }
 
-//defines a player object (constructor function). 
-//ToDo : use classes ? 
-function Player(playerNumber, sec) 
-{
-  //0 indexed !
-  this.playerNumber = playerNumber;
-  //NOT 0 indexed
-  this.playerName = 'Player ' + (this.playerNumber+1);
-  this.rgb = '';
-  this.timeout = 0;
-  this.sec = sec;
-  this.playerHr = 0;
-  this.playerMin = 0;
-  this.playerSec = 0;
-  this.totalPlayerSec = 0;
-  this.delta = 0;
-  this.playerNameFormGroup = document.createElement('div');
-  this.div = document.createElement('div');
-  this.newButton = newButton;
-}
 
 /*---------------------------------
 
@@ -234,14 +246,14 @@ function setNumberOfPlayers()
 	// create the appropriate number of players with all their properties
 	for (var i = players.length; i < numberOfPlayers; i++) 
 	{
-		//instantiate player objects. ToDo : using "new()" is supposedly not good...replace ? use classes and the constructor function ? 
+		//instantiate player objects. TODO : using "new()" is supposedly not good...replace ? use classes and the constructor function ? 
 		players[i] = new Player(i,turnLength);
 
 		//Id their div with their player numer (0 indexed!!!)
 		players[i].div.id = players[i].playerNumber;
 
 		//populate "their div" with the various contents
-		players[i].div.innerHTML = players[i].newButton();
+		players[i].div.innerHTML = players[i].newButton;
 
 		//add the div to the DOM
 		newPlayerNode.appendChild(players[i].div);
@@ -395,13 +407,15 @@ function showDropDown()
 
 -----------------------------------*/
 
+//this is the function directly called by each player's button.	
 function playerTimer(id) 
 {
 	
 	//register if it is the first click to start total play time calculation
-	if (isGameStarted == false) 
+	if (isGameStarted == false || isGamePaused == true) 
 	{
 		isGameStarted = true;
+		isGamePaused = false;
 		gameDuration();
 	}
 
@@ -477,7 +491,7 @@ function setTurnLength()
 -----------------------------------*/
 
 //recursive function in order to keep the timer going. Stoped by changing the value of stopPlayerTime
-//Simplify by using players[id].sec (increamented in the previous function and passed to this one) some way instead of having to define a player.delta, player.playerSec, etc. 
+//TODO : Simplify by using players[id].sec (incremented in the previous function and passed to this one) some way instead of having to define a player.delta, player.playerSec, etc. 
 function playerDuration(id) 
 {
     if (isNewTurn == true) 
@@ -501,12 +515,13 @@ function playerDuration(id)
 
 -----------------------------------*/
 
-//is called on any of the player's button.
+//is called on any of the player's button IF and only IF the game was not started yet or isn't paused.
 function gameDuration() 
 {
-    if (isTimeStopped == true) 
+    if (isTimeStopped == true || isGamePaused == true) 
     {
         isTimeStopped = false;
+        isGamePaused = false;
         gameStart = Date.now();
         timerCycle();
     }
@@ -526,11 +541,6 @@ function timerCycle()
     totalPlayTimeDisplayDiv.innerHTML = gameHr + ':' + gameMin + ':' + gameSec;
 
     setTimeout('timerCycle()', 300);
-	}
-	//TODO : implement the pause button
-	else if (isGamePaused == true) 
-	{
-			//TODO
 	}
 }
 
@@ -565,7 +575,7 @@ function resetTotalPlayTimer ()
 
 /*---------------------------------
 
-		ToDo
+		TODO
 - créer un settings button "game settings" qui ouvre un dropdown avec 
   - un premier "checkbox" appelé "total player duration" qui 
       - dans les settings : 
