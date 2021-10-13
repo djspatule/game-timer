@@ -78,7 +78,6 @@ document.querySelector('#playerSettingsButton').onclick = showDropDown;
 
 document.querySelector('#playersSettingsSubmissionButton').onclick = registerPlayersSettings;	
 
-var playerButtons = [];
 
 /*------------------------------------------
 
@@ -268,9 +267,7 @@ function setNumberOfPlayers()
 	//see strict js execution in loops and variable hoisting for more details
 	//Carfeul, this is only true and OK since ES6. So not compatible with old browsers.
 	//TODO : closure used on playertimer. Research why.
-			playerButtons[i] = document.getElementById('player'+i+'Button');
-			playerButtons[i].addEventListener('click', function() {playerTimer(i);}, false);
-
+		document.querySelector('#player'+i+'Button').onclick = function() {playerTimer(i);};
 	}
 }
 
