@@ -155,6 +155,7 @@ var test = document.getElementById('test');
 test.addEventListener('click', function() {
 	test.style.backgroundColor = 'black';
 });
+/TEST
 -------------------------------------------*/
 
 	//define and returns the button's HTML with the RGB color as well as many elements from the player (number, name, etc.) in order for things to be easiliy identifiable per player in the DOM
