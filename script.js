@@ -183,7 +183,7 @@ class Player
 		}
 	#2nd section:  Add the event to the playerTimer() function definition as argument : playerTimer(event)
 	var id = event.target.id 
-
+	/TEST
 
 	-------------------------------------------*/
 
