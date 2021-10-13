@@ -267,6 +267,7 @@ function setNumberOfPlayers()
 	//and the final version of i (2 for instance) only would be passed in playerTimer when a button is clicked 
 	//see strict js execution in loops and variable hoisting for more details
 	//Carfeul, this is only true and OK since ES6. So not compatible with old browsers.
+	//TODO : closure used on playertimer. Research why.
 			playerButtons[i] = document.getElementById('player'+i+'Button');
 			playerButtons[i].addEventListener('click', function() {playerTimer(i);}, false);
 
@@ -281,7 +282,7 @@ function setNumberOfPlayers()
 
 function registerPlayersSettings() 
 {
-	for (player of players) 
+	for (const player of players) 
 	{
 		//put the elements chosen by the user for each player in the respective player property before updating the DOM (and the player button in particular) withthe value of such properties
 		player.playerName = document.getElementById('dropDownFormNameInput'+player.playerNumber).value;
@@ -471,7 +472,7 @@ function setTurnLength()
 	turnLength = parseInt(window.prompt('Enter the turn duration in seconds: '));
 	collapseSettings();
 	
-	for (let player of players) 
+	for (const player of players) 
 	{
 		clearTimeout(player.timeout);
 		document.getElementById('playerTimerDiv'+player.playerNumber).innerHTML = turnLength;
@@ -555,7 +556,7 @@ function resetTotalPlayTimer ()
     totalPlayTimeDisplayDiv.innerHTML = '00:00:00';
 
     //also resets players timers
-    for (player of players) 
+    for (const player of players) 
     {
     	player.totalPlayerSec = 0;
     	player.delta  = 0;
