@@ -78,6 +78,8 @@ document.querySelector('#playerSettingsButton').onclick = showDropDown;
 
 document.querySelector('#playersSettingsSubmissionButton').onclick = registerPlayersSettings;	
 
+var playerButtons = [];
+
 /*------------------------------------------
 
 		Initiate the app with 2 players
@@ -167,23 +169,10 @@ class Player
 	{
 
 	/*------------------------------------------
+	
 	TODO : 
 	- Find a way to avoid this way of creating a large button ? is is unusual or "dirty" to create large HTML sections as such in js  ?  
-	- Avoid the onclick event ? with a for loop iterating over players to create corresponding event listeners for the click on their "player${this.playerNumber}Button", for this, pass the even as an argument to the function called by the even listener.it could be easier...
 	- simplify the call to new button ? Integrate it as a property instead of as a method ? 
-
-
-	TEST
-	#1st section : add just under the first call to the setNumberOfPlayers function on line 88. 
-		var playerButtons = []; // add at the very begining of the program
-		for (var i = 0; i<players.length; i++) 
-		{
-			playerButtons[i] = document.getElementById('player'+i+'Button');
-			pauseButton.addEventListener('click', playerTimer;
-		}
-	#2nd section:  Add the event to the playerTimer() function definition as argument : playerTimer(event)
-	var id = event.target.id 
-	/TEST
 
 	-------------------------------------------*/
 
@@ -191,7 +180,7 @@ class Player
 	//TODO : find a way to put this button in a this.button player property without having to use 'return' ?
 	var button = {};
 	return button = `<br>
-		<button onclick="playerTimer(${this.playerNumber})" type="button" class="progressButton" style="background-color:${this.rgb}" id="player${this.playerNumber}Button">
+		<button type="button" class="progressButton" style="background-color:${this.rgb}" id="player${this.playerNumber}Button">
 			<div class="progressButton__progress">
 				<span class="progressButton__text">
 					<div class="big" id="playerNameDiv${this.playerNumber}">${this.playerName}</div>
@@ -209,7 +198,6 @@ class Player
 		</button>`;
 	}
 }
-
 
 /*---------------------------------
 
@@ -243,8 +231,8 @@ function setNumberOfPlayers()
 		}
 	}
 
-	// create the appropriate number of players with all their properties
-	for (var i = players.length; i < numberOfPlayers; i++) 
+	// create the appropriate number of players with all their properties. 
+	for (let i = players.length; i < numberOfPlayers; i++) 
 	{
 		//instantiate player objects. TODO : using "new()" is supposedly not good...replace ? use classes and the constructor function ? 
 		players[i] = new Player(i,turnLength);
@@ -267,13 +255,20 @@ function setNumberOfPlayers()
 			<div class="less-big">${players[i].playerName}</div>
 			<div class="form-group" id="playerNameFormGroup${players[i].playerNumber}">
 				<label for="dropDownFormNameInput${players[i].playerNumber}">Name</label>
-				<input type="text" class="form-control" maxlength="12" autofocus id="dropDownFormNameInput${players[i].playerNumber}" value="${players[i].playerName}">
+				<input type="text" class="form-control" maxlength="12" id="dropDownFormNameInput${players[i].playerNumber}" value="${players[i].playerName}">
 				<label for="dropDownFormColorInput${players[i].playerNumber}">Color</label>
 				<input type="color" value="${players[i].rgb}" class="form-control" id="dropDownFormColorInput${players[i].playerNumber}">
 			</div><br>`;
 
 		//Populate the settings dropdown menu
 		dropDownFormGroup.appendChild(players[i].playerNameFormGroup);
+
+	//use let to define i in this "for loop" because with var, it wouldn't work as a new i variable wouldn't be created at each iteration of the loop 
+	//and the final version of i (2 for instance) only would be passed in playerTimer when a button is clicked 
+	//see strict js execution in loops and variable hoisting for more details
+	//Carfeul, this is only true and OK since ES6. So not compatible with old browsers.
+			playerButtons[i] = document.getElementById('player'+i+'Button');
+			playerButtons[i].addEventListener('click', function() {playerTimer(i);}, false);
 
 	}
 }
@@ -410,7 +405,6 @@ function showDropDown()
 //this is the function directly called by each player's button.	
 function playerTimer(id) 
 {
-	
 	//register if it is the first click to start total play time calculation
 	if (isGameStarted == false || isGamePaused == true) 
 	{
@@ -477,7 +471,7 @@ function setTurnLength()
 	turnLength = parseInt(window.prompt('Enter the turn duration in seconds: '));
 	collapseSettings();
 	
-	for (const player of players) 
+	for (let player of players) 
 	{
 		clearTimeout(player.timeout);
 		document.getElementById('playerTimerDiv'+player.playerNumber).innerHTML = turnLength;
