@@ -565,9 +565,7 @@ function resetTotalPlayTimer()
 	}
 }
 
-
 /*---------------------------------
-test from windows
 		TODO
 - Add a "pause game" button in the settings
 
