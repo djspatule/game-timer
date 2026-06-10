@@ -49,6 +49,8 @@ let gameStart = Date.now();
 let turnStart = Date.now();
 let isNewTurn = true;
 let isGamePaused = false;
+//store the moment the game was paused so we can shift start times on resume
+let pauseStart = 0;
 
 //create a variable to store the totalPlayTimeDisplayDiv from the DOM so that it can be accessed and modified easily after
 const totalPlayTimeDisplayDiv = document.getElementById('totalPlayTimeDisplayDiv');
@@ -77,6 +79,9 @@ document.querySelector('#totalPlayTimeButton').addEventListener('click', resetTo
 document.querySelector('#playerSettingsButton').addEventListener('click', showDropDown);
 
 document.querySelector('#playersSettingsSubmissionButton').addEventListener('click', registerPlayersSettings);
+
+//recalculate layout if the user resizes the window or rotates their phone
+window.addEventListener('resize', updateLayout);
 
 
 /*------------------------------------------
@@ -226,6 +231,8 @@ function setNumberOfPlayers()
 
 		//Id their div with their player number (0 indexed!!!)
 		players[i].div.id = players[i].playerNumber;
+		//col-6 = 2 per row max; Bootstrap will distribute them evenly
+		players[i].div.classList.add('col-6');
 
 		//populate "their div" with the various contents
 		players[i].div.innerHTML = players[i].getNewButton();
@@ -257,6 +264,27 @@ function setNumberOfPlayers()
 		//Closure used on playertimer to not have to store i, id and players[id] later in dowstream functions in different variables declared inside each loop with "let" .
 		document.querySelector('#player' + i + 'Button').addEventListener('click', () => { playerTimer(i); });
 	}
+
+	//recalculate button heights so all players fit on screen without scrolling
+	updateLayout();
+}
+
+/*---------------------------------
+
+		Update layout - responsive design
+
+-----------------------------------*/
+
+//called every time the number of players changes so all buttons fit the visible screen area
+function updateLayout()
+{
+	//160px reserved for the header (title, buttons, total play time)
+	const rows = Math.ceil(numberOfPlayers / 2);
+	const buttonHeight = Math.floor((window.innerHeight - 160) / rows);
+	document.querySelectorAll('.progressButton').forEach(btn =>
+	{
+		btn.style.height = buttonHeight + 'px';
+	});
 }
 
 /*---------------------------------
@@ -338,12 +366,20 @@ function pause()
 	if (isGamePaused === false)
 	{
 		isGamePaused = true;
+		//record when the pause started so we can shift the start times on resume
+		pauseStart = Date.now();
 		toggle(pauseButton);
 	}
 	else
 	{
+		//shift both start references forward by the paused duration so delta calculations stay accurate
+		const pausedDuration = Date.now() - pauseStart;
+		turnStart += pausedDuration;
+		gameStart += pausedDuration;
 		isGamePaused = false;
 		toggle(pauseButton);
+		//restart the total play timer loop (it stops itself when paused)
+		if (isGameStarted === true) { timerCycle(); }
 	}
 }
 
@@ -406,6 +442,12 @@ function playerTimer(id)
 
 function playerTurnDuration(id)
 {
+	//if the game is paused, reschedule without updating anything
+	if (isGamePaused === true)
+	{
+		players[id].timeout = setTimeout(() => playerTurnDuration(id), 300);
+		return;
+	}
 
 	const delta = (Date.now() - turnStart) / 1000;
 	//decrement player's turn time
@@ -555,6 +597,10 @@ function resetTotalPlayTimer()
 /*---------------------------------
 		TODO
 - Add a "pause game" button in the settings
+
+- Responsive design : with 4+ players, all player buttons should be visible at once without scrolling.
+  Use a CSS grid or Bootstrap row/col so buttons fill the available screen space (height + width) dynamically.
+  On mobile (portrait), stack 2 per row; on landscape / tablet, fit all players on one screen.
 
 - créer un settings button "game settings" qui ouvre un dropdown avec
   - un premier "checkbox" appelé "total player duration" qui

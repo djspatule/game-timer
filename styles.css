@@ -8,8 +8,8 @@
   overflow: hidden;
   border-radius: 5px;
   min-width: 125px;
-  /*added manually*/
-  min-height: 190px;
+  /*width fills the Bootstrap column; height is set dynamically by updateLayout()*/
+  width: 100%;
 }
 
 .progressButton__progress {
