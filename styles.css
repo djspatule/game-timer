@@ -8,7 +8,8 @@
   overflow: hidden;
   border-radius: 5px;
   min-width: 125px;
-  /*width fills the Bootstrap column; height is set dynamically by updateLayout()*/
+  /*added manually*/
+  min-height: 190px;
   width: 100%;
 }
 

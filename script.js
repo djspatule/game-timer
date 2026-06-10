@@ -80,8 +80,6 @@ document.querySelector('#playerSettingsButton').addEventListener('click', showDr
 
 document.querySelector('#playersSettingsSubmissionButton').addEventListener('click', registerPlayersSettings);
 
-//recalculate layout if the user resizes the window or rotates their phone
-window.addEventListener('resize', updateLayout);
 
 
 /*------------------------------------------
@@ -264,27 +262,6 @@ function setNumberOfPlayers()
 		//Closure used on playertimer to not have to store i, id and players[id] later in dowstream functions in different variables declared inside each loop with "let" .
 		document.querySelector('#player' + i + 'Button').addEventListener('click', () => { playerTimer(i); });
 	}
-
-	//recalculate button heights so all players fit on screen without scrolling
-	updateLayout();
-}
-
-/*---------------------------------
-
-		Update layout - responsive design
-
------------------------------------*/
-
-//called every time the number of players changes so all buttons fit the visible screen area
-function updateLayout()
-{
-	//160px reserved for the header (title, buttons, total play time)
-	const rows = Math.ceil(numberOfPlayers / 2);
-	const buttonHeight = Math.floor((window.innerHeight - 160) / rows);
-	document.querySelectorAll('.progressButton').forEach(btn =>
-	{
-		btn.style.height = buttonHeight + 'px';
-	});
 }
 
 /*---------------------------------
