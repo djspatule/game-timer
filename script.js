@@ -206,7 +206,10 @@ function setNumberOfPlayers()
 	if (players.length !== 0)
 	{
 		//prompt the user for the number of players
-		numberOfPlayers = parseInt(window.prompt('Enter the number of players: '));
+		const newNumberOfPlayers = parseInt(window.prompt('Enter the number of players: '));
+		//ignore the input if the user cancelled the prompt or entered something invalid
+		if (isNaN(newNumberOfPlayers)) { return; }
+		numberOfPlayers = newNumberOfPlayers;
 		//collapse the settings for faster UX
 		collapseSettings();
 	}
@@ -502,7 +505,10 @@ function setTurnLength()
 {
 
 	//prompt the user for the required turn duration
-	turnLength = parseInt(window.prompt('Enter the turn duration in seconds: '));
+	const newTurnLength = parseInt(window.prompt('Enter the turn duration in seconds: '));
+	//ignore the input if the user cancelled the prompt or entered something invalid
+	if (isNaN(newTurnLength)) { return; }
+	turnLength = newTurnLength;
 	collapseSettings();
 
 	for (const player of players)
@@ -630,14 +636,11 @@ function saveSettings()
 //load settings from localStorage if they exist, before building the player buttons
 function loadSettings()
 {
-	if (localStorage.getItem('numberOfPlayers'))
-	{
-		numberOfPlayers = parseInt(localStorage.getItem('numberOfPlayers'));
-	}
-	if (localStorage.getItem('turnLength'))
-	{
-		turnLength = parseInt(localStorage.getItem('turnLength'));
-	}
+	const savedNumberOfPlayers = parseInt(localStorage.getItem('numberOfPlayers'));
+	if (!isNaN(savedNumberOfPlayers)) { numberOfPlayers = savedNumberOfPlayers; }
+
+	const savedTurnLength = parseInt(localStorage.getItem('turnLength'));
+	if (!isNaN(savedTurnLength)) { turnLength = savedTurnLength; }
 }
 
 /*---------------------------------
