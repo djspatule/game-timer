@@ -11,6 +11,13 @@
   /*added manually*/
   min-height: 190px;
   width: 100%;
+  /*prevent double-tap zoom on mobile so all taps register as clicks*/
+  touch-action: manipulation;
+}
+
+button {
+  /*prevent double-tap zoom on mobile for all other buttons (pause, mute, etc.)*/
+  touch-action: manipulation;
 }
 
 /* highlight the active player's button - dark ring in light mode, white ring in dark mode */
