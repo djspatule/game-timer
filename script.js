@@ -7,76 +7,61 @@
 
 -----------------------------------*/
 
-//create a turnDuration variable
-var turnLength = 30;
+let turnLength = 30;
 
-// create a sound variable to "beep"
-var audio = new Audio('beep.mp3');
+const audio = new Audio('beep.mp3');
 
-// create a variable to track the number of players (and of timers)
-var numberOfPlayers = 2;
+let numberOfPlayers = 2;
 
-//create boolean variable to record whether we have started a new game (new or reseted) or not 
-var isGameStarted = false;
+let isGameStarted = false;
 
-//create boolean variables to register the state of buttons (pressed or not) and dropdowns (collapsed or not) 
-var isMute = true;
-var isDark = false;
-var isSettingsCollapsed = true;
-var isdropdownCollapsed = true;
+let isMute = true;
+let isDark = false;
+let isSettingsCollapsed = true;
+let isdropdownCollapsed = true;
 
-//Create a variable containing the DOM element where players will be added
-var newPlayerNode = document.getElementById('newPlayerNode');
-//create a variable containing the dropdown div where all player's customization dropdown settings form will be implemented
-var dropDownForm = document.getElementById('dropDownForm');
-//create a variable containing the dropdown group div where each player's customization dropdownGroup in the overall settings dropdown form will be implemented
-var dropDownFormGroup = document.getElementById('dropDownFormGroup');
+const newPlayerNode = document.getElementById('newPlayerNode');
+const dropDownForm = document.getElementById('dropDownForm');
+const dropDownFormGroup = document.getElementById('dropDownFormGroup');
 
-//create the players array in which all players objects will be stored
 const players = [];
 
-//create overall player button's color variables
-var r = 0;
-var g = 0;
-var b = 0;
+let r = 0;
+let g = 0;
+let b = 0;
 
-//create overall game timer variables
-var gameHr = 0;
-var gameSec = 0;
-var gameMin = 0;
-var isTimeStopped = true;
-var gameStart = Date.now();
-var turnStart = Date.now();
-var isNewTurn = true;
-var isGamePaused = false;
+let gameHr = 0;
+let gameSec = 0;
+let gameMin = 0;
+let isTimeStopped = true;
+let gameStart = Date.now();
+let turnStart = Date.now();
+let isNewTurn = true;
+let isGamePaused = false;
 
-//create a variable to store the totalPlayTimeDisplayDiv from the DOM so that it can be accessed and modified easily after
-var totalPlayTimeDisplayDiv = document.getElementById('totalPlayTimeDisplayDiv');
+const totalPlayTimeDisplayDiv = document.getElementById('totalPlayTimeDisplayDiv');
 
-//Get all button elements from the DOM and set corresponding even listeners to be able to start certain functions later on click.
-
-var darkButton = document.getElementById('darkButton');
-//FYI, you don't put dark() with the () because you don't want to call the function right here right now but only when the event listener detects the event.
+const darkButton = document.getElementById('darkButton');
 darkButton.addEventListener('click', dark);
 
-var muteButton = document.getElementById('muteButton');
+const muteButton = document.getElementById('muteButton');
 muteButton.addEventListener('click', mute);
 
-var settingsButton = document.getElementById('settingsButton');
+const settingsButton = document.getElementById('settingsButton');
 settingsButton.addEventListener('click', collapse);
 
-var pauseButton = document.getElementById('pauseButton');
+const pauseButton = document.getElementById('pauseButton');
 pauseButton.addEventListener('click', pause);
 
-document.querySelector('#setNumberOfPlayersButton').onclick = setNumberOfPlayers;
+document.querySelector('#setNumberOfPlayersButton').addEventListener('click', setNumberOfPlayers);
 
-document.querySelector('#setTurnLengthButton').onclick = setTurnLength;
+document.querySelector('#setTurnLengthButton').addEventListener('click', setTurnLength);
 
-document.querySelector('#totalPlayTimeButton').onclick = resetTotalPlayTimer;
+document.querySelector('#totalPlayTimeButton').addEventListener('click', resetTotalPlayTimer);
 
-document.querySelector('#playerSettingsButton').onclick = showDropDown;
+document.querySelector('#playerSettingsButton').addEventListener('click', showDropDown);
 
-document.querySelector('#playersSettingsSubmissionButton').onclick = registerPlayersSettings;
+document.querySelector('#playersSettingsSubmissionButton').addEventListener('click', registerPlayersSettings);
 
 
 /*------------------------------------------
@@ -93,18 +78,16 @@ document.addEventListener('DOMContentLoaded', setNumberOfPlayers);
 		Helper functions 
 
 -------------------------------------------*/
-//reset all variables and timers.
 function resetTimers()
 {
 	for (const player of players)
 	{
 		clearTimeout(player.timeout);
 		player.sec = turnLength;
-		//register the turn's start time
 		turnStart = Date.now();
 		document.getElementById('playerTimerDiv' + player.playerNumber).innerHTML = turnLength;
 		document.getElementById('playerTimerDiv' + player.playerNumber).classList.remove('text-danger');
-		var playerButton = document.getElementById('player' + player.playerNumber + 'Button');
+		const playerButton = document.getElementById('player' + player.playerNumber + 'Button');
 		playerButton.querySelector('.progressButton__progress').style.height = "0%";
 		isNewTurn = true;
 	}
@@ -149,7 +132,6 @@ class Player
 	constructor(_playerNumber, _sec)
 	{
 		this.playerNumber = _playerNumber;
-		//NOT 0 indexed
 		this.playerName = 'Player ' + (this.playerNumber + 1);
 		this.rgb = randomRGB();
 		this.timeout = 0;
@@ -162,23 +144,10 @@ class Player
 		this.playerNameFormGroup = document.createElement('div');
 		this.div = document.createElement('div');
 	}
-	//TODO : use a getter or a normal class method ? (by just deleting word getter and adding paranthesis where the function is called newButton()) ?
-	//Getters and setters are used to define methods on a class which are then used as if they are properties.
-	get newButton()
+
+	getNewButton()
 	{
-
-		/*------------------------------------------
-		
-		TODO : 
-		- Find a way to avoid this way of creating a large button ? is is unusual or "dirty" to create large HTML sections as such in js  ?  
-		- simplify the call to new button ? Integrate it as a property instead of as a method ? 
-	
-		-------------------------------------------*/
-
-		//define and returns the button's HTML with the RGB color as well as many elements from the player (number, name, etc.) in order for things to be easiliy identifiable per player in the DOM
-		//TODO : find a way to put this button in a this.button player property without having to use 'return' ?
-		var button = {};
-		return button = `<br>
+		return `<br>
 		<button type="button" class="progressButton" style="background-color:${this.rgb}" id="player${this.playerNumber}Button">
 			<div class="progressButton__progress">
 				<span class="progressButton__text">
@@ -206,49 +175,35 @@ class Player
 
 function setNumberOfPlayers()
 {
-	//if the function was already called before, ask for a new number of players. Otherwise, use the default value for numberOfPlayers variable
-	if (players.length != 0)
+	if (players.length !== 0)
 	{
-		//prompt the user for the number of players
 		numberOfPlayers = parseInt(window.prompt('Enter the number of players: '));
-		//collapse the settings for faster UX
 		collapseSettings();
 	}
 
-	//if the user is inputing a number of users inferior to the current number
 	if (numberOfPlayers < players.length)
 	{
-		var playersToRemove = players.length - numberOfPlayers;
-		for (var i = 0; i < playersToRemove; i++)
+		const playersToRemove = players.length - numberOfPlayers;
+		for (let i = 0; i < playersToRemove; i++)
 		{
-			//remove the last player's HTML div 
 			newPlayerNode.removeChild(players[players.length - 1].div);
-			//remove its settings section
 			dropDownFormGroup.removeChild(players[players.length - 1].playerNameFormGroup)
-			//remove the last player in the array
 			players.pop();
 		}
 	}
 
-	// create the appropriate number of players with all their properties. 
 	for (let i = players.length; i < numberOfPlayers; i++)
 	{
-		//instantiate player objects. TODO : using "new()" is supposedly not good...replace ? use classes and the constructor function ? 
 		players[i] = new Player(i, turnLength);
 
-		//Id their div with their player numer (0 indexed!!!)
 		players[i].div.id = players[i].playerNumber;
 
-		//populate "their div" with the various contents
-		players[i].div.innerHTML = players[i].newButton;
+		players[i].div.innerHTML = players[i].getNewButton();
 
-		//add the div to the DOM
 		newPlayerNode.appendChild(players[i].div);
 
-		//populate their totalPlayerTimeDiv (which can thus easiliy be accessed later...in particular by the reset function)
 		players[i].totalPlayerTimeDiv = document.getElementById('totalPlayerTimeDiv' + i);
 
-		//create the settings dropdown group for that specific player
 		players[i].playerNameFormGroup.innerHTML = `
 			<div class="dropdown-divider"></div>
 			<div class="less-big">${players[i].playerName}</div>
@@ -259,15 +214,9 @@ function setNumberOfPlayers()
 				<input type="color" value="${players[i].rgb}" class="form-control" id="dropDownFormColorInput${players[i].playerNumber}">
 			</div><br>`;
 
-		//Populate the settings dropdown menu
 		dropDownFormGroup.appendChild(players[i].playerNameFormGroup);
 
-		//use let to define i in this "for loop" because with var, it wouldn't work as a new i variable wouldn't be created at each iteration of the loop 
-		//and the final version of i (2 for instance) only would be passed in playerTimer when a button is clicked 
-		//see strict js execution in loops and variable hoisting for more details
-		//Carfeul, this is only true and OK since ES6. So not compatible with old browsers.
-		//Closure used on playertimer to not have to store i, id and players[id] later in dowstream functions in different variables declared inside each loop with "let" .
-		document.querySelector('#player' + i + 'Button').onclick = function () { playerTimer(i); };
+		document.querySelector('#player' + i + 'Button').addEventListener('click', () => { playerTimer(i); });
 	}
 }
 
@@ -296,7 +245,6 @@ function registerPlayersSettings()
 		UI settings - dark mode, mute, etc.
 
 -----------------------------------*/
-//helper function that toggle a button's between secondary (dark) and outline-secondary (light) 
 function toggle(button)
 {
 	if (button.classList.contains('btn-secondary'))
@@ -311,10 +259,9 @@ function toggle(button)
 	}
 }
 
-//implement the mute button as a toggle
 function mute()
 {
-	if (isMute == false)
+	if (isMute === false)
 	{
 		isMute = true;
 		toggle(muteButton);
@@ -327,10 +274,9 @@ function mute()
 	}
 }
 
-// implement the dark mode button as a toggle
 function dark()
 {
-	if (isDark == false)
+	if (isDark === false)
 	{
 		isDark = true;
 		toggle(darkButton);
@@ -344,10 +290,9 @@ function dark()
 	}
 }
 
-//implement the pause button as a toggle
 function pause()
 {
-	if (isGamePaused == false)
+	if (isGamePaused === false)
 	{
 		isGamePaused = true;
 		toggle(pauseButton);
@@ -359,12 +304,11 @@ function pause()
 	}
 }
 
-//shows the settings div with all its buttons when clicking on the "gear" button
 function collapse()
 {
-	var settingsDiv = document.getElementById('settingsDiv');
+	const settingsDiv = document.getElementById('settingsDiv');
 
-	if (isSettingsCollapsed == true)
+	if (isSettingsCollapsed === true)
 	{
 		isSettingsCollapsed = false;
 		settingsDiv.classList.add('show');
@@ -378,11 +322,10 @@ function collapse()
 	}
 }
 
-//shows the dropdown menu when clicking on the "player settings" button
 function showDropDown()
 {
 
-	if (isdropdownCollapsed == true)
+	if (isdropdownCollapsed === true)
 	{
 		isdropdownCollapsed = false;
 		dropDownForm.classList.add('show');
@@ -400,11 +343,9 @@ function showDropDown()
 
 -----------------------------------*/
 
-//this is the function directly called by each player's button.	
 function playerTimer(id)
 {
-	//register if it is the first click to start total play time calculation
-	if (isGameStarted == false || isGamePaused == true)
+	if (isGameStarted === false || isGamePaused === true)
 	{
 		isGameStarted = true;
 		isGamePaused = false;
@@ -419,37 +360,27 @@ function playerTimer(id)
 function playerTurnDuration(id)
 {
 
-	var delta = (Date.now() - turnStart) / 1000;
-	//decrement player's turn time
+	const delta = (Date.now() - turnStart) / 1000;
 	players[id].sec = turnLength - Math.floor(delta);
 
-	//increment player's total time
 	playerDuration(id);
 
-
-	//update progress bar
-	var playerButton = document.getElementById('player' + id + 'Button');
-	var progress = (1 - (players[id].sec / turnLength)) * 100
+	const playerButton = document.getElementById('player' + id + 'Button');
+	const progress = (1 - (players[id].sec / turnLength)) * 100
 	playerButton.querySelector('.progressButton__progress').style.height = `${progress}%`;
 
-	//fetch the playerTimerDiv to change its class 
-	var playerTimerDiv = document.getElementById('playerTimerDiv' + id);
+	const playerTimerDiv = document.getElementById('playerTimerDiv' + id);
 
-	//alert the user at 10 seconds to the end and in the last 3 seconds
-	if (isMute == false && (players[id].sec == 10 || players[id].sec <= 3))
+	if (isMute === false && (players[id].sec === 10 || players[id].sec <= 3))
 	{
 		audio.play();
 		playerTimerDiv.classList.add('text-danger');
 	}
 
-	//updates the countdown's value
 	playerTimerDiv.innerHTML = players[id].sec;
 
-	//start the actual counting function....by calling itself every second (recursive function)
-	players[id].timeout = setTimeout(playerTurnDuration, 300, id);
+	players[id].timeout = setTimeout(() => playerTurnDuration(id), 300);
 
-	//TODO : comment that function to get turns in the negative...
-	//halt the counting function if time is out. this is the halting condition required in any recursive function
 	if (players[id].sec <= 0)
 	{
 		clearTimeout(players[id].timeout);
@@ -507,10 +438,9 @@ function playerDuration(id)
 
 -----------------------------------*/
 
-//is called on any of the player's button IF and only IF the game was not started yet or isn't paused.
 function gameDuration()
 {
-	if (isTimeStopped == true || isGamePaused == true)
+	if (isTimeStopped === true || isGamePaused === true)
 	{
 		isTimeStopped = false;
 		isGamePaused = false;
@@ -519,20 +449,18 @@ function gameDuration()
 	}
 }
 
-//recursive function in order to keep the timer going. Stoped by changing the value of isTimeStopped
 function timerCycle()
 {
-	if (isTimeStopped == false && isGamePaused == false)
+	if (isTimeStopped === false && isGamePaused === false)
 	{
-		var delta = (Date.now() - gameStart) / 1000;
-		//TODO : define these variables or directly write into totalPlayTimeDisplayDiv based on delta ? (addZero(Math.floor(delta % 60));, etc.) 
+		const delta = (Date.now() - gameStart) / 1000;
 		gameSec = addZero(Math.floor(delta % 60));
 		gameMin = addZero(Math.floor((delta / 60) % 3600));
 		gameHr = addZero(Math.floor(delta / 3600));
 
 		totalPlayTimeDisplayDiv.innerHTML = gameHr + ':' + gameMin + ':' + gameSec;
 
-		setTimeout('timerCycle()', 300);
+		setTimeout(timerCycle, 300);
 	}
 }
 
@@ -542,17 +470,15 @@ function timerCycle()
 
 -----------------------------------*/
 
-//called on click of the totalPlayTime button.
 function resetTotalPlayTimer()
 {
-	if (isTimeStopped == false)
+	if (isTimeStopped === false)
 	{
 		isTimeStopped = true;
 		isGameStarted = false;
 
 		totalPlayTimeDisplayDiv.innerHTML = '00:00:00';
 
-		//also resets players timers
 		for (const player of players)
 		{
 			player.totalPlayerSec = 0;
@@ -560,7 +486,6 @@ function resetTotalPlayTimer()
 			player.totalPlayerTimeDiv.innerHTML = '00:00:00';
 		}
 
-		//reset all variables and timers.
 		resetTimers();
 	}
 }
