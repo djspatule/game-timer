@@ -13,6 +13,17 @@
   width: 100%;
 }
 
+/* highlight the active player's button - dark shadow in light mode, white glow in dark mode */
+.progressButton--active {
+  outline: 4px solid rgba(0, 0, 0, 0.6);
+  box-shadow: 0 0 14px rgba(0, 0, 0, 0.5);
+}
+
+body.dark-mode .progressButton--active {
+  outline: 4px solid white;
+  box-shadow: 0 0 14px rgba(255, 255, 255, 0.85);
+}
+
 .progressButton__progress {
   position: absolute;
   height: 0%;

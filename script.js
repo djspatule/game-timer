@@ -89,7 +89,12 @@ document.querySelector('#playersSettingsSubmissionButton').addEventListener('cli
 -------------------------------------------*/
 
 //TODO : see if waiting for the DOM to be loaded fully helps with the reimplementation of the player object
-document.addEventListener('DOMContentLoaded', setNumberOfPlayers);
+document.addEventListener('DOMContentLoaded', function()
+{
+	//load any previously saved settings before building the player buttons
+	loadSettings();
+	setNumberOfPlayers();
+});
 
 /*------------------------------------------
 
@@ -241,6 +246,15 @@ function setNumberOfPlayers()
 		//populate their totalPlayerTimeDiv (which can thus easiliy be accessed later...in particular by the reset function)
 		players[i].totalPlayerTimeDiv = document.getElementById('totalPlayerTimeDiv' + i);
 
+		//if a name and color were previously saved for this player, load them and update the button right away
+		if (localStorage.getItem('playerName' + i))
+		{
+			players[i].playerName = localStorage.getItem('playerName' + i);
+			players[i].rgb = localStorage.getItem('playerRgb' + i);
+			document.getElementById('playerNameDiv' + i).innerHTML = players[i].playerName;
+			document.getElementById('player' + i + 'Button').style.backgroundColor = players[i].rgb;
+		}
+
 		//create the settings dropdown group for that specific player
 		players[i].playerNameFormGroup.innerHTML = `
 			<div class="dropdown-divider"></div>
@@ -262,6 +276,9 @@ function setNumberOfPlayers()
 		//Closure used on playertimer to not have to store i, id and players[id] later in dowstream functions in different variables declared inside each loop with "let" .
 		document.querySelector('#player' + i + 'Button').addEventListener('click', () => { playerTimer(i); });
 	}
+
+	//save the current number of players and turn length
+	saveSettings();
 }
 
 /*---------------------------------
@@ -282,6 +299,8 @@ function registerPlayersSettings()
 		//collapse the dropdown for faster UX.
 		collapseSettings();
 	}
+	//save updated names and colors
+	saveSettings();
 }
 
 /*---------------------------------
@@ -328,12 +347,16 @@ function dark()
 		isDark = true;
 		toggle(darkButton);
 		document.body.style.backgroundColor = 'black';
+		//add class to body so CSS can switch the active player highlight to a white glow
+		document.body.classList.add('dark-mode');
 	}
 	else
 	{
 		isDark = false;
 		toggle(darkButton);
 		document.body.style.backgroundColor = 'white';
+		//remove class so CSS reverts the active player highlight to a dark shadow
+		document.body.classList.remove('dark-mode');
 	}
 }
 
@@ -412,6 +435,13 @@ function playerTimer(id)
 		gameDuration();
 	}
 
+	//remove the active highlight from all buttons then apply it to the current player only
+	for (const player of players)
+	{
+		document.getElementById('player' + player.playerNumber + 'Button').classList.remove('progressButton--active');
+	}
+	document.getElementById('player' + id + 'Button').classList.add('progressButton--active');
+
 	resetTimers();
 
 	playerTurnDuration(id);
@@ -480,6 +510,9 @@ function setTurnLength()
 		clearTimeout(player.timeout);
 		document.getElementById('playerTimerDiv' + player.playerNumber).innerHTML = turnLength;
 	}
+
+	//save the new turn length
+	saveSettings();
 }
 
 /*---------------------------------
@@ -553,21 +586,57 @@ function resetTotalPlayTimer()
 {
 	if (isTimeStopped === false)
 	{
+		//ask for confirmation to avoid accidental resets
+		if (!window.confirm('Reset all timers?')) { return; }
+
 		isTimeStopped = true;
 		isGameStarted = false;
 
 		totalPlayTimeDisplayDiv.innerHTML = '00:00:00';
 
-		//also resets players timers
+		//also resets players timers, turn counts and active highlight
 		for (const player of players)
 		{
 			player.totalPlayerSec = 0;
 			player.delta = 0;
 			player.totalPlayerTimeDiv.innerHTML = '00:00:00';
+			//remove active highlight
+			document.getElementById('player' + player.playerNumber + 'Button').classList.remove('progressButton--active');
 		}
 
 		//reset all variables and timers.
 		resetTimers();
+	}
+}
+
+/*---------------------------------
+
+		Save and load settings
+
+-----------------------------------*/
+
+//save current settings to localStorage so they survive a page refresh
+function saveSettings()
+{
+	localStorage.setItem('numberOfPlayers', numberOfPlayers);
+	localStorage.setItem('turnLength', turnLength);
+	for (const player of players)
+	{
+		localStorage.setItem('playerName' + player.playerNumber, player.playerName);
+		localStorage.setItem('playerRgb' + player.playerNumber, player.rgb);
+	}
+}
+
+//load settings from localStorage if they exist, before building the player buttons
+function loadSettings()
+{
+	if (localStorage.getItem('numberOfPlayers'))
+	{
+		numberOfPlayers = parseInt(localStorage.getItem('numberOfPlayers'));
+	}
+	if (localStorage.getItem('turnLength'))
+	{
+		turnLength = parseInt(localStorage.getItem('turnLength'));
 	}
 }
 
