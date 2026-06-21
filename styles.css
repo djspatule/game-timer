@@ -54,6 +54,22 @@ body.dark-mode .progressButton--active {
   font-weight: bold;
 }
 
+.time-out-alert {
+  animation: time-out-pulse 0.35s ease-in-out 0s 6 alternate;
+  color: #ffffff !important;
+  text-shadow: 0 0 8px #dc3545, 0 0 16px #dc3545;
+}
+
+@keyframes time-out-pulse {
+  from {
+    transform: scale(1);
+  }
+
+  to {
+    transform: scale(1.35);
+  }
+}
+
 .less-big {
   display: block;
   font-size: 1.17em;

@@ -108,10 +108,11 @@ function resetTimers()
 	{
 		clearTimeout(player.timeout);
 		player.sec = turnLength;
+		player.hasTimeOutAlerted = false;
 		//register the turn's start time
 		turnStart = Date.now();
 		document.getElementById('playerTimerDiv' + player.playerNumber).innerHTML = turnLength;
-		document.getElementById('playerTimerDiv' + player.playerNumber).classList.remove('text-danger');
+		document.getElementById('playerTimerDiv' + player.playerNumber).classList.remove('text-danger', 'time-out-alert');
 		const playerButton = document.getElementById('player' + player.playerNumber + 'Button');
 		playerButton.querySelector('.progressButton__progress').style.height = "0%";
 		isNewTurn = true;
@@ -167,6 +168,7 @@ class Player
 		this.playerSec = 0;
 		this.totalPlayerSec = 0;
 		this.delta = 0;
+		this.hasTimeOutAlerted = false;
 		this.playerNameFormGroup = document.createElement('div');
 		this.div = document.createElement('div');
 	}
@@ -326,6 +328,26 @@ function toggle(button)
 	}
 }
 
+function setPauseButtonPaused(isPaused)
+{
+	pauseButton.classList.toggle('btn-secondary', isPaused);
+	pauseButton.classList.toggle('btn-outline-secondary', !isPaused);
+	pauseButton.classList.toggle('bi-pause-circle-fill', !isPaused);
+	pauseButton.classList.toggle('bi-play-circle-fill', isPaused);
+}
+
+function resumeGame()
+{
+	//shift both start references forward by the paused duration so delta calculations stay accurate
+	const pausedDuration = Date.now() - pauseStart;
+	turnStart += pausedDuration;
+	gameStart += pausedDuration;
+	isGamePaused = false;
+	setPauseButtonPaused(false);
+	//restart the total play timer loop (it stops itself when paused)
+	if (isGameStarted === true) { timerCycle(); }
+}
+
 //implement the mute button as a toggle
 function mute()
 {
@@ -371,18 +393,11 @@ function pause()
 		isGamePaused = true;
 		//record when the pause started so we can shift the start times on resume
 		pauseStart = Date.now();
-		toggle(pauseButton);
+		setPauseButtonPaused(true);
 	}
 	else
 	{
-		//shift both start references forward by the paused duration so delta calculations stay accurate
-		const pausedDuration = Date.now() - pauseStart;
-		turnStart += pausedDuration;
-		gameStart += pausedDuration;
-		isGamePaused = false;
-		toggle(pauseButton);
-		//restart the total play timer loop (it stops itself when paused)
-		if (isGameStarted === true) { timerCycle(); }
+		resumeGame();
 	}
 }
 
@@ -430,11 +445,15 @@ function showDropDown()
 //this is the function directly called by each player's button.
 function playerTimer(id)
 {
+	if (isGamePaused === true)
+	{
+		resumeGame();
+	}
+
 	//register if it is the first click to start total play time calculation
-	if (isGameStarted === false || isGamePaused === true)
+	if (isGameStarted === false)
 	{
 		isGameStarted = true;
-		isGamePaused = false;
 		gameDuration();
 	}
 
@@ -481,8 +500,19 @@ function playerTurnDuration(id)
 		playerTimerDiv.classList.add('text-danger');
 	}
 
+	if (players[id].sec <= 0 && players[id].hasTimeOutAlerted === false)
+	{
+		players[id].hasTimeOutAlerted = true;
+		playerTimerDiv.classList.add('text-danger', 'time-out-alert');
+		if (isMute === false)
+		{
+			audio.currentTime = 0;
+			audio.play();
+		}
+	}
+
 	//updates the countdown's value
-	playerTimerDiv.innerHTML = players[id].sec;
+	playerTimerDiv.innerHTML = Math.max(players[id].sec, 0);
 
 	//start the actual counting function....by calling itself every second (recursive function)
 	players[id].timeout = setTimeout(() => playerTurnDuration(id), 300);
@@ -597,6 +627,8 @@ function resetTotalPlayTimer()
 
 		isTimeStopped = true;
 		isGameStarted = false;
+		isGamePaused = false;
+		setPauseButtonPaused(false);
 
 		totalPlayTimeDisplayDiv.innerHTML = '00:00:00';
 
