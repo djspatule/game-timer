@@ -70,6 +70,8 @@ settingsButton.addEventListener('click', collapse);
 const pauseButton = document.getElementById('pauseButton');
 pauseButton.addEventListener('click', pause);
 
+document.addEventListener('click', clearPlayerTimeOutAlerts);
+
 document.querySelector('#setNumberOfPlayersButton').addEventListener('click', setNumberOfPlayers);
 
 document.querySelector('#setTurnLengthButton').addEventListener('click', setTurnLength);
@@ -112,8 +114,9 @@ function resetTimers()
 		//register the turn's start time
 		turnStart = Date.now();
 		document.getElementById('playerTimerDiv' + player.playerNumber).innerHTML = turnLength;
-		document.getElementById('playerTimerDiv' + player.playerNumber).classList.remove('text-danger', 'time-out-alert');
+		document.getElementById('playerTimerDiv' + player.playerNumber).classList.remove('text-danger');
 		const playerButton = document.getElementById('player' + player.playerNumber + 'Button');
+		playerButton.classList.remove('progressButton--time-out');
 		playerButton.querySelector('.progressButton__progress').style.height = "0%";
 		isNewTurn = true;
 	}
@@ -136,6 +139,14 @@ function addZero(i)
 {
 	if (i < 10) { i = "0" + i };  // add zero in front of numbers < 10
 	return i;
+}
+
+function clearPlayerTimeOutAlerts()
+{
+	for (const player of players)
+	{
+		document.getElementById('player' + player.playerNumber + 'Button').classList.remove('progressButton--time-out');
+	}
 }
 
 //randomly generate a color with rgb values >100 for the player button without it being too light (to nicely see the white font color in secondary buttons)
@@ -503,7 +514,8 @@ function playerTurnDuration(id)
 	if (players[id].sec <= 0 && players[id].hasTimeOutAlerted === false)
 	{
 		players[id].hasTimeOutAlerted = true;
-		playerTimerDiv.classList.add('text-danger', 'time-out-alert');
+		playerTimerDiv.classList.add('text-danger');
+		playerButton.classList.add('progressButton--time-out');
 		if (isMute === false)
 		{
 			audio.currentTime = 0;
@@ -545,6 +557,8 @@ function setTurnLength()
 	{
 		clearTimeout(player.timeout);
 		document.getElementById('playerTimerDiv' + player.playerNumber).innerHTML = turnLength;
+		document.getElementById('playerTimerDiv' + player.playerNumber).classList.remove('text-danger');
+		document.getElementById('player' + player.playerNumber + 'Button').classList.remove('progressButton--time-out');
 	}
 
 	//save the new turn length
@@ -639,7 +653,7 @@ function resetTotalPlayTimer()
 			player.delta = 0;
 			player.totalPlayerTimeDiv.innerHTML = '00:00:00';
 			//remove active highlight
-			document.getElementById('player' + player.playerNumber + 'Button').classList.remove('progressButton--active');
+			document.getElementById('player' + player.playerNumber + 'Button').classList.remove('progressButton--active', 'progressButton--time-out');
 		}
 
 		//reset all variables and timers.

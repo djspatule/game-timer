@@ -30,6 +30,21 @@ body.dark-mode .progressButton--active {
   box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.9);
 }
 
+.progressButton--time-out {
+  animation: time-out-button-glow 0.8s ease-in-out infinite alternate;
+  box-shadow: 0 0 0 4px rgba(220, 53, 69, 0.95), 0 0 24px 10px rgba(220, 53, 69, 0.8);
+}
+
+@keyframes time-out-button-glow {
+  from {
+    box-shadow: 0 0 0 4px rgba(220, 53, 69, 0.85), 0 0 18px 6px rgba(220, 53, 69, 0.65);
+  }
+
+  to {
+    box-shadow: 0 0 0 5px rgba(220, 53, 69, 1), 0 0 32px 14px rgba(220, 53, 69, 0.95);
+  }
+}
+
 .progressButton__progress {
   position: absolute;
   height: 0%;
@@ -52,22 +67,6 @@ body.dark-mode .progressButton--active {
   margin-left: 0;
   margin-right: 0;
   font-weight: bold;
-}
-
-.time-out-alert {
-  animation: time-out-pulse 0.35s ease-in-out 0s 6 alternate;
-  color: #ffffff !important;
-  text-shadow: 0 0 8px #dc3545, 0 0 16px #dc3545;
-}
-
-@keyframes time-out-pulse {
-  from {
-    transform: scale(1);
-  }
-
-  to {
-    transform: scale(1.35);
-  }
 }
 
 .less-big {
